@@ -16,14 +16,14 @@ interface HeroSectionProps {
 
 const FALLBACK_SLIDES: HeroSlide[] = [
   {
-    id: "fallback",
-    title_km: "សូមស្វាគតម៌មកវិទ្យាល័យ",
+    id: "slide-welcome",
+    title_km: "សូមស្វាគមន៍មកវិទ្យាល័យ",
     title_en: "Welcome to Our High School",
-    subtitle_km: "ផ្ដល់ការអប់រំ ប្រកបដោយ គុណភាព វប្បធម៌ និងនវានុវត្ត",
+    subtitle_km: "ផ្ដល់ការអប់រំប្រកបដោយគុណភាព វប្បធម៌ និងនវានុវត្ត",
     subtitle_en: "Empowering the next generation of Cambodian leaders through academic rigor, cultural integrity, and innovative learning.",
-    gradient: "linear-gradient(135deg, #0d1b38 0%, #1e3a8a 55%, #1e3066 100%)",
+    gradient: "linear-gradient(135deg, #061525 0%, #0c2d5e 55%, #092045 100%)",
     cta_primary_en: "Enroll Now",
-    cta_primary_km: "ចុះឈ្មោះ",
+    cta_primary_km: "ចុះឈ្មោះឥឡូវ",
     cta_secondary_en: "View Prospectus",
     cta_secondary_km: "មើលព័ត៌មាន",
     cta_primary_href: "/contact",
@@ -31,24 +31,238 @@ const FALLBACK_SLIDES: HeroSlide[] = [
     sort_order: 1,
     is_active: true,
   },
+  {
+    id: "slide-academic",
+    title_km: "ភាពល្អឥតខ្ចោះក្នុងការអប់រំ",
+    title_en: "Excellence in Education",
+    subtitle_km: "កម្មវិធីសិក្សាទំនើបបញ្ចូលជាមួយប្រពៃណីខ្មែរ ដើម្បីភាពជោគជ័យ",
+    subtitle_en: "Modern curriculum blending STEM, humanities, and Khmer classical arts to prepare students for a global future.",
+    gradient: "linear-gradient(135deg, #061e14 0%, #0c4228 55%, #083320 100%)",
+    cta_primary_en: "Our Programs",
+    cta_primary_km: "កម្មវិធីរបស់យើង",
+    cta_secondary_en: "Meet Our Teachers",
+    cta_secondary_km: "ជួបគ្រូបង្រៀន",
+    cta_primary_href: "/about",
+    cta_secondary_href: "/about",
+    sort_order: 2,
+    is_active: true,
+  },
+  {
+    id: "slide-culture",
+    title_km: "ជំរកវប្បធម៌ខ្មែរ",
+    title_en: "Rooted in Khmer Heritage",
+    subtitle_km: "ការអប់រំដែលការពារវប្បធម៌ប្រពៃណីខ្មែរ ហើយប្រែក្លាយជីវិតរបស់យើង",
+    subtitle_en: "Honoring Cambodia's rich cultural legacy through traditional arts, Khmer language, and national history.",
+    gradient: "linear-gradient(135deg, #1a0c05 0%, #5c2d0a 55%, #421f08 100%)",
+    cta_primary_en: "Cultural Programs",
+    cta_primary_km: "កម្មវិធីវប្បធម៌",
+    cta_secondary_en: "Learn More",
+    cta_secondary_km: "ស្វែងយល់បន្ថែម",
+    cta_primary_href: "/activities",
+    cta_secondary_href: "/about",
+    sort_order: 3,
+    is_active: true,
+  },
+  {
+    id: "slide-future",
+    title_km: "កសាងអនាគតកម្ពុជា",
+    title_en: "Building Cambodia's Future",
+    subtitle_km: "ជំនឹ STEM ភាសា ហើយភាពជាអ្នកដឹកនាំ ស្ថាបនាកម្ពុជានៃថ្ងៃស្អែក",
+    subtitle_en: "Through STEM education, leadership programs, and digital literacy, we prepare students to lead Cambodia's development.",
+    gradient: "linear-gradient(135deg, #0c0820 0%, #271463 55%, #1a0c4a 100%)",
+    cta_primary_en: "Join Us Today",
+    cta_primary_km: "ចូលរួមជាមួយយើង",
+    cta_secondary_en: "View Activities",
+    cta_secondary_km: "មើលសកម្មភាព",
+    cta_primary_href: "/contact",
+    cta_secondary_href: "/activities",
+    sort_order: 4,
+    is_active: true,
+  },
 ];
 
+const SLIDE_ACCENTS = ["#fdbc13", "#4ade80", "#fb923c", "#c084fc"];
+
 const slideVariants = {
-  enter: (dir: number) => ({
-    x: dir > 0 ? "100%" : "-100%",
-    opacity: 0,
-  }),
+  enter: (dir: number) => ({ x: dir > 0 ? "100%" : "-100%", opacity: 0 }),
   center: { x: 0, opacity: 1 },
-  exit: (dir: number) => ({
-    x: dir > 0 ? "-100%" : "100%",
-    opacity: 0,
-  }),
+  exit: (dir: number) => ({ x: dir > 0 ? "-100%" : "100%", opacity: 0 }),
 };
 
 const contentVariants = {
   hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0 },
 };
+
+function AngkorWatSilhouette() {
+  return (
+    <svg
+      viewBox="0 0 500 420"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      className="w-full h-full"
+    >
+      {/* Foundation */}
+      <rect x="0" y="350" width="500" height="70" />
+      {/* Platform 1 - outer gallery */}
+      <rect x="5" y="323" width="490" height="27" />
+      {/* Platform 2 - middle gallery */}
+      <rect x="55" y="298" width="390" height="25" />
+      {/* Platform 3 - inner terrace */}
+      <rect x="135" y="275" width="230" height="23" />
+
+      {/* Niches on inner terrace */}
+      <rect x="153" y="277" width="10" height="16" rx="2" />
+      <rect x="173" y="277" width="10" height="16" rx="2" />
+      <rect x="237" y="277" width="10" height="16" rx="2" />
+      <rect x="280" y="277" width="10" height="16" rx="2" />
+      <rect x="317" y="277" width="10" height="16" rx="2" />
+      <rect x="337" y="277" width="10" height="16" rx="2" />
+
+      {/* Niches on middle platform */}
+      <rect x="68" y="300" width="9" height="13" rx="2" />
+      <rect x="86" y="300" width="9" height="13" rx="2" />
+      <rect x="406" y="300" width="9" height="13" rx="2" />
+      <rect x="424" y="300" width="9" height="13" rx="2" />
+
+      {/* ── OUTER LEFT TOWER ── */}
+      <rect x="20" y="252" width="34" height="71" />
+      <rect x="17" y="239" width="40" height="13" />
+      <rect x="21" y="227" width="32" height="12" />
+      <rect x="25" y="216" width="24" height="11" />
+      <rect x="28" y="206" width="18" height="10" />
+      <rect x="31" y="197" width="12" height="9" />
+      <ellipse cx="37" cy="190" rx="8" ry="12" />
+
+      {/* ── INNER LEFT TOWER ── */}
+      <rect x="90" y="232" width="46" height="66" />
+      <rect x="86" y="217" width="54" height="15" />
+      <rect x="91" y="203" width="44" height="14" />
+      <rect x="96" y="190" width="34" height="13" />
+      <rect x="101" y="178" width="24" height="12" />
+      <rect x="105" y="167" width="16" height="11" />
+      <rect x="108" y="157" width="10" height="10" />
+      <ellipse cx="113" cy="149" rx="9" ry="14" />
+
+      {/* ── CENTRAL TOWER (tallest) ── */}
+      <rect x="218" y="202" width="64" height="73" />
+      <rect x="212" y="184" width="76" height="18" />
+      <rect x="218" y="167" width="64" height="17" />
+      <rect x="224" y="151" width="52" height="16" />
+      <rect x="230" y="136" width="40" height="15" />
+      <rect x="235" y="122" width="30" height="14" />
+      <rect x="239" y="109" width="22" height="13" />
+      <rect x="242" y="97" width="16" height="12" />
+      <rect x="244" y="86" width="12" height="11" />
+      <ellipse cx="250" cy="77" rx="11" ry="16" />
+
+      {/* ── INNER RIGHT TOWER (mirror) ── */}
+      <rect x="364" y="232" width="46" height="66" />
+      <rect x="360" y="217" width="54" height="15" />
+      <rect x="365" y="203" width="44" height="14" />
+      <rect x="370" y="190" width="34" height="13" />
+      <rect x="375" y="178" width="24" height="12" />
+      <rect x="379" y="167" width="16" height="11" />
+      <rect x="382" y="157" width="10" height="10" />
+      <ellipse cx="387" cy="149" rx="9" ry="14" />
+
+      {/* ── OUTER RIGHT TOWER (mirror) ── */}
+      <rect x="446" y="252" width="34" height="71" />
+      <rect x="443" y="239" width="40" height="13" />
+      <rect x="447" y="227" width="32" height="12" />
+      <rect x="451" y="216" width="24" height="11" />
+      <rect x="454" y="206" width="18" height="10" />
+      <rect x="457" y="197" width="12" height="9" />
+      <ellipse cx="463" cy="190" rx="8" ry="12" />
+
+      {/* Causeway pillars */}
+      <rect x="218" y="373" width="12" height="47" />
+      <rect x="270" y="373" width="12" height="47" />
+
+      {/* Water reflection (subtle, bottom) */}
+      <g opacity="0.2" transform="scale(1,-1) translate(0,-870)">
+        <rect x="5" y="323" width="490" height="27" />
+        <rect x="55" y="298" width="390" height="25" />
+        <rect x="135" y="275" width="230" height="23" />
+        <rect x="218" y="202" width="64" height="73" />
+        <rect x="212" y="184" width="76" height="18" />
+        <ellipse cx="250" cy="77" rx="11" ry="16" />
+        <rect x="90" y="232" width="46" height="66" />
+        <rect x="364" y="232" width="46" height="66" />
+      </g>
+    </svg>
+  );
+}
+
+function LotusFlower({ size = 56 }: { size?: number }) {
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      fill="currentColor"
+      width={size}
+      height={size}
+      aria-hidden="true"
+    >
+      {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
+        <ellipse
+          key={angle}
+          cx="50"
+          cy="26"
+          rx="8"
+          ry="24"
+          transform={`rotate(${angle}, 50, 50)`}
+          opacity="0.75"
+        />
+      ))}
+      {[22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5].map((angle) => (
+        <ellipse
+          key={angle}
+          cx="50"
+          cy="32"
+          rx="6"
+          ry="16"
+          transform={`rotate(${angle}, 50, 50)`}
+          opacity="0.5"
+        />
+      ))}
+      <circle cx="50" cy="50" r="9" />
+    </svg>
+  );
+}
+
+function KhmerPattern() {
+  return (
+    <svg
+      viewBox="0 0 120 120"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      className="absolute inset-0 w-full h-full opacity-[0.04]"
+      style={{ backgroundSize: "120px 120px" }}
+    >
+      <defs>
+        <pattern id="khmer-tile" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+          {/* Diamond centre */}
+          <polygon points="30,4 56,30 30,56 4,30" stroke="white" strokeWidth="1.2" fill="none" />
+          {/* Inner diamond */}
+          <polygon points="30,14 46,30 30,46 14,30" stroke="white" strokeWidth="0.8" fill="none" />
+          {/* Corner dots */}
+          <circle cx="30" cy="4" r="2" fill="white" />
+          <circle cx="56" cy="30" r="2" fill="white" />
+          <circle cx="30" cy="56" r="2" fill="white" />
+          <circle cx="4" cy="30" r="2" fill="white" />
+          {/* Centre dot */}
+          <circle cx="30" cy="30" r="3" fill="white" />
+          {/* Cross lines */}
+          <line x1="30" y1="4" x2="30" y2="56" stroke="white" strokeWidth="0.4" opacity="0.5" />
+          <line x1="4" y1="30" x2="56" y2="30" stroke="white" strokeWidth="0.4" opacity="0.5" />
+        </pattern>
+      </defs>
+      <rect width="120" height="120" fill="url(#khmer-tile)" />
+    </svg>
+  );
+}
 
 export default function HeroSection({ slides }: HeroSectionProps) {
   const locale = useLocale();
@@ -73,16 +287,14 @@ export default function HeroSection({ slides }: HeroSectionProps) {
     goTo((current - 1 + allSlides.length) % allSlides.length, -1);
   }, [current, allSlides.length, goTo]);
 
-  // Auto-advance
   useEffect(() => {
     if (allSlides.length <= 1 || paused) return;
-    timerRef.current = setInterval(next, 5000);
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
+    timerRef.current = setInterval(next, 5500);
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [next, allSlides.length, paused]);
 
   const slide = allSlides[current];
+  const accent = SLIDE_ACCENTS[current % SLIDE_ACCENTS.length];
 
   return (
     <section
@@ -90,7 +302,7 @@ export default function HeroSection({ slides }: HeroSectionProps) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* ─── Background Slides ─── */}
+      {/* ── Background Slides ── */}
       <AnimatePresence initial={false} custom={direction}>
         <motion.div
           key={`bg-${current}`}
@@ -113,30 +325,76 @@ export default function HeroSection({ slides }: HeroSectionProps) {
           ) : (
             <div
               className="absolute inset-0"
-              style={{ background: slide.gradient ?? "linear-gradient(135deg, #0d1b38 0%, #1e3a8a 100%)" }}
+              style={{ background: slide.gradient ?? "linear-gradient(135deg, #061525 0%, #0c2d5e 100%)" }}
             >
-              {/* Decorative geometry */}
-              <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute -top-20 -right-20 w-[420px] h-[420px] rounded-full bg-white/5" />
-                <div className="absolute bottom-10 left-1/3 w-48 h-48 rounded-full bg-school-gold-400/10" />
-                <div className="absolute top-1/3 right-1/4 w-72 h-72 rounded-full bg-white/[0.03]" />
-                <div
-                  className="absolute inset-0 opacity-10"
-                  style={{
-                    backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,255,255,0.04) 40px, rgba(255,255,255,0.04) 41px)",
-                  }}
-                />
+              {/* Khmer diamond tile pattern */}
+              <KhmerPattern />
+
+              {/* Angkor Wat silhouette — right side, desktop only */}
+              <div
+                className="absolute right-0 bottom-0 w-[55%] h-[88%] hidden lg:block pointer-events-none"
+                style={{ color: "white", opacity: 0.13 }}
+              >
+                <AngkorWatSilhouette />
               </div>
+
+              {/* Glowing halo behind the central tower */}
+              <div
+                className="absolute hidden lg:block pointer-events-none rounded-full"
+                style={{
+                  right: "22%",
+                  bottom: "18%",
+                  width: "220px",
+                  height: "220px",
+                  background: `radial-gradient(circle, ${accent}22 0%, transparent 70%)`,
+                }}
+              />
+
+              {/* Lotus flowers — decorative corners */}
+              <div
+                className="absolute bottom-16 left-6 pointer-events-none"
+                style={{ color: accent, opacity: 0.18 }}
+              >
+                <LotusFlower size={72} />
+              </div>
+              <div
+                className="absolute bottom-12 left-20 pointer-events-none"
+                style={{ color: accent, opacity: 0.11 }}
+              >
+                <LotusFlower size={48} />
+              </div>
+              <div
+                className="absolute top-16 right-8 pointer-events-none lg:hidden"
+                style={{ color: accent, opacity: 0.13 }}
+              >
+                <LotusFlower size={60} />
+              </div>
+
+              {/* Radial glow top-right */}
+              <div
+                className="absolute -top-16 -right-16 w-[380px] h-[380px] rounded-full pointer-events-none"
+                style={{ background: `radial-gradient(circle, ${accent}18 0%, transparent 65%)` }}
+              />
+
+              {/* Subtle horizontal accent line */}
+              <div
+                className="absolute left-0 right-0 pointer-events-none"
+                style={{
+                  bottom: "56px",
+                  height: "1px",
+                  background: `linear-gradient(to right, transparent 0%, ${accent}40 30%, ${accent}40 70%, transparent 100%)`,
+                }}
+              />
             </div>
           )}
 
-          {/* Dark gradient overlay — heavier on left for text legibility */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-black/15" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+          {/* Gradient overlays for text legibility */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
         </motion.div>
       </AnimatePresence>
 
-      {/* ─── Content ─── */}
+      {/* ── Content ── */}
       <div className="relative z-10 h-full flex items-center">
         <div className="container mx-auto px-6 lg:px-8">
           <div className="max-w-2xl">
@@ -149,29 +407,52 @@ export default function HeroSection({ slides }: HeroSectionProps) {
                 transition={{ duration: 0.45, ease: "easeOut" }}
                 variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
               >
-                {/* Khmer title — gold accent */}
+                {/* Cambodia badge */}
+                <motion.div
+                  variants={contentVariants}
+                  transition={{ delay: 0.0, duration: 0.4 }}
+                  className="inline-flex items-center gap-2 mb-4 px-3 py-1 rounded-full border text-xs font-semibold tracking-wider uppercase"
+                  style={{ borderColor: `${accent}60`, color: accent, background: `${accent}15` }}
+                >
+                  <span style={{ fontSize: "10px" }}>🇰🇭</span>
+                  Kingdom of Cambodia
+                </motion.div>
+
+                {/* Khmer title */}
                 <motion.p
                   variants={contentVariants}
-                  transition={{ delay: 0.05, duration: 0.4 }}
-                  className="font-khmer-title text-school-gold-400 text-lg md:text-xl mb-2 leading-relaxed"
+                  transition={{ delay: 0.06, duration: 0.4 }}
+                  className="font-khmer-title text-lg md:text-xl mb-2 leading-relaxed"
+                  style={{ color: accent }}
                 >
                   {slide.title_km}
                 </motion.p>
 
-                {/* English title — large white */}
+                {/* English title */}
                 <motion.h1
                   variants={contentVariants}
-                  transition={{ delay: 0.12, duration: 0.4 }}
+                  transition={{ delay: 0.13, duration: 0.4 }}
                   className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-5"
                 >
                   {slide.title_en}
                 </motion.h1>
 
+                {/* Accent divider line */}
+                <motion.div
+                  variants={contentVariants}
+                  transition={{ delay: 0.18, duration: 0.4 }}
+                  className="flex items-center gap-3 mb-5"
+                >
+                  <div className="w-10 h-0.5 rounded" style={{ background: accent }} />
+                  <div className="w-3 h-0.5 rounded opacity-50" style={{ background: accent }} />
+                  <div className="w-1.5 h-0.5 rounded opacity-30" style={{ background: accent }} />
+                </motion.div>
+
                 {/* Subtitle */}
                 {(slide.subtitle_en || slide.subtitle_km) && (
                   <motion.p
                     variants={contentVariants}
-                    transition={{ delay: 0.2, duration: 0.4 }}
+                    transition={{ delay: 0.22, duration: 0.4 }}
                     className={cn(
                       "text-white/80 text-base md:text-lg leading-relaxed mb-8 max-w-xl",
                       locale === "km" ? "font-khmer" : ""
@@ -186,16 +467,17 @@ export default function HeroSection({ slides }: HeroSectionProps) {
                 {/* CTA Buttons */}
                 <motion.div
                   variants={contentVariants}
-                  transition={{ delay: 0.28, duration: 0.4 }}
+                  transition={{ delay: 0.30, duration: 0.4 }}
                   className="flex flex-wrap gap-3"
                 >
                   <Button
                     asChild
                     size="lg"
                     className={cn(
-                      "bg-white text-school-blue-900 hover:bg-white/90 font-semibold px-7 h-12 shadow-xl shadow-black/20 transition-all duration-200 group",
+                      "font-semibold px-7 h-12 shadow-xl shadow-black/25 transition-all duration-200 group border-0",
                       locale === "km" && "font-khmer"
                     )}
+                    style={{ background: accent, color: "#0a0a0a" }}
                   >
                     <Link href={`/${locale}${slide.cta_primary_href ?? "/contact"}`}>
                       {locale === "km"
@@ -209,9 +491,10 @@ export default function HeroSection({ slides }: HeroSectionProps) {
                     asChild
                     size="lg"
                     className={cn(
-                      "bg-white/10 border border-white/25 text-white hover:bg-white/20 backdrop-blur-sm px-7 h-12 font-medium transition-all duration-200 group",
+                      "bg-white/10 border text-white hover:bg-white/20 backdrop-blur-sm px-7 h-12 font-medium transition-all duration-200 group",
                       locale === "km" && "font-khmer"
                     )}
+                    style={{ borderColor: "rgba(255,255,255,0.25)" }}
                   >
                     <Link href={`/${locale}${slide.cta_secondary_href ?? "/about"}`}>
                       <BookOpen className="mr-2 w-4 h-4 opacity-80" />
@@ -227,7 +510,7 @@ export default function HeroSection({ slides }: HeroSectionProps) {
         </div>
       </div>
 
-      {/* ─── Prev / Next arrows ─── */}
+      {/* ── Prev / Next arrows ── */}
       {allSlides.length > 1 && (
         <>
           <button
@@ -247,33 +530,33 @@ export default function HeroSection({ slides }: HeroSectionProps) {
         </>
       )}
 
-      {/* ─── Dot indicators ─── */}
+      {/* ── Dot indicators ── */}
       {allSlides.length > 1 && (
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
           {allSlides.map((_, i) => (
             <button
               key={i}
               onClick={() => goTo(i, i > current ? 1 : -1)}
-              className={cn(
-                "rounded-full transition-all duration-400 border-0",
-                i === current
-                  ? "w-8 h-2.5 bg-school-gold-400"
-                  : "w-2.5 h-2.5 bg-white/40 hover:bg-white/70"
-              )}
+              className="rounded-full transition-all duration-300 border-0"
+              style={{
+                width: i === current ? "32px" : "10px",
+                height: "10px",
+                background: i === current ? accent : "rgba(255,255,255,0.35)",
+              }}
               aria-label={`Go to slide ${i + 1}`}
             />
           ))}
         </div>
       )}
 
-      {/* ─── Slide counter (top-right) ─── */}
+      {/* ── Slide counter ── */}
       {allSlides.length > 1 && (
-        <div className="absolute top-24 right-6 z-20 text-white/50 text-xs font-mono tabular-nums">
+        <div className="absolute top-24 right-6 z-20 text-white/40 text-xs font-mono tabular-nums">
           {String(current + 1).padStart(2, "0")} / {String(allSlides.length).padStart(2, "0")}
         </div>
       )}
 
-      {/* ─── Bottom wave divider ─── */}
+      {/* ── Bottom wave divider ── */}
       <div className="absolute bottom-0 left-0 right-0 z-10 pointer-events-none">
         <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full block">
           <path
