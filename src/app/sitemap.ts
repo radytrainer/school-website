@@ -7,16 +7,10 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createServerClient();
 
-  const [{ data: news }, { data: activities }] = await Promise.all([
-    supabase
-      .from("news")
-      .select("slug, updated_at")
-      .eq("status", "published"),
-    supabase
-      .from("activities")
-      .select("id, updated_at")
-      .eq("status", "published"),
-  ]);
+  const { data: news } = await supabase
+    .from("news")
+    .select("slug, updated_at")
+    .eq("status", "published");
 
   const staticRoutes = [
     "",

@@ -3,12 +3,11 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useLocale } from "next-intl";
-import { Plus, Edit, Trash2, Loader2, Star, StarOff, TrendingUp } from "lucide-react";
+import { Plus, Edit, Trash2, Loader2, StarOff, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/lib/supabase";
 import type { Statistics } from "@/types";
-import { formatShortDate } from "@/lib/utils";
 import { toast } from "sonner";
 import { deleteStatistics, setCurrentStatistics } from "@/actions/statistics";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";

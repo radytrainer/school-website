@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLocale } from "next-intl";
-import { Plus, Search, Filter, Eye, Edit, Trash2, Star, Loader2 } from "lucide-react";
+import { Plus, Search, Eye, Edit, Trash2, Star, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";

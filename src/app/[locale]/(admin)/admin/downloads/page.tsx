@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/lib/supabase";
 import type { Download as DownloadType } from "@/types";
-import { formatShortDate, formatFileSize, getLocalizedText } from "@/lib/utils";
+import { formatFileSize, getLocalizedText } from "@/lib/utils";
 import { toast } from "sonner";
 import { deleteDownload } from "@/actions/downloads";
 

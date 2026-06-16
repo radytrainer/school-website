@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";

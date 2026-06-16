@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import { useTranslations, useLocale } from "next-intl";
 import { ArrowRight, Calendar, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import type { Activity } from "@/types";
 import { formatShortDate, getLocalizedText } from "@/lib/utils";
 

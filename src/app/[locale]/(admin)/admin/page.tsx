@@ -5,11 +5,9 @@ import {
   TrendingUp, TrendingDown, ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { formatRelativeDate } from "@/lib/utils";
 import type { Message, AuditLog } from "@/types";
-
-const VisitorChart = dynamic(() => import("@/components/admin/VisitorChart"), { ssr: false });
+import VisitorChartWrapper from "@/components/admin/VisitorChartWrapper";
 
 async function getDashboardData() {
   const supabase = createServerClient();
@@ -181,7 +179,7 @@ export default async function AdminDashboardPage() {
                 </span>
               </div>
             </div>
-            <VisitorChart />
+            <VisitorChartWrapper />
           </div>
 
           {/* Recent Activity */}

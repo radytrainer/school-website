@@ -17,6 +17,7 @@ export async function createUser(
   }
 
   const supabase = createServerClient();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { password, ...rest } = parsed.data;
 
   // Create Firebase auth account via Admin SDK is typically done client-side.
