@@ -65,7 +65,7 @@ export default function AdminSidebar() {
   };
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full relative">
       {/* Brand */}
       <div
         className={cn(
@@ -227,7 +227,7 @@ export default function AdminSidebar() {
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          "hidden lg:flex flex-col fixed top-0 left-0 h-full transition-all duration-300 z-40 relative",
+          "hidden lg:flex flex-col fixed top-0 left-0 h-full transition-all duration-300 z-40",
           collapsed ? "w-16" : "w-60"
         )}
         style={{ background: "#0d1b38" }}
