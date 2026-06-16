@@ -1,0 +1,163 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "news": "News",
+    "activities": "Activities",
+    "achievements": "Achievements",
+    "gallery": "Gallery",
+    "downloads": "Downloads",
+    "contact": "Contact",
+    "admin": "Dashboard"
+  },
+  "hero": {
+    "welcome": "Welcome to",
+    "school_name": "Phnom Penh High School",
+    "subtitle": "Empowering students through excellence in education",
+    "btn_explore": "Explore More",
+    "btn_contact": "Contact Us"
+  },
+  "stats": {
+    "title": "Statistics",
+    "subtitle": "Annual Academic Statistics",
+    "total_students": "Total Students",
+    "total_teachers": "Teachers",
+    "total_classes": "Classes",
+    "grade_a": "BAC II Grade A Students",
+    "graduation_rate": "Graduation Rate"
+  },
+  "news": {
+    "title": "Latest News",
+    "subtitle": "Stay updated with school news",
+    "read_more": "Read More",
+    "view_all": "View All",
+    "featured": "Featured News",
+    "categories": "Categories",
+    "search": "Search news...",
+    "no_results": "No news found"
+  },
+  "activities": {
+    "title": "Activities",
+    "subtitle": "School activities and events",
+    "view_all": "View All",
+    "all_categories": "All Categories",
+    "date": "Date",
+    "location": "Location",
+    "no_activities": "No activities found"
+  },
+  "achievements": {
+    "title": "Achievements",
+    "subtitle": "Our school's accomplishments",
+    "view_all": "View All",
+    "student": "Student",
+    "teacher": "Teacher",
+    "school": "School",
+    "national": "National",
+    "provincial": "Provincial",
+    "district": "District",
+    "school_level": "School Level"
+  },
+  "gallery": {
+    "title": "Gallery",
+    "subtitle": "Photo and video albums",
+    "view_all": "View All",
+    "photos": "Photos",
+    "videos": "Videos"
+  },
+  "downloads": {
+    "title": "Download Center",
+    "subtitle": "Official documents and forms",
+    "download": "Download",
+    "view_all": "View All",
+    "size": "Size",
+    "type": "Type",
+    "count": "Downloads"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Get in touch with us",
+    "name": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send Message",
+    "sending": "Sending...",
+    "success": "Your message has been sent successfully!",
+    "error": "Failed to send message. Please try again.",
+    "address": "Address",
+    "working_hours": "Working Hours"
+  },
+  "about": {
+    "title": "About School",
+    "history": "History",
+    "vision": "Vision",
+    "mission": "Mission",
+    "values": "Core Values",
+    "leadership": "Leadership"
+  },
+  "notice": {
+    "title": "Notice Board",
+    "exam": "Exam",
+    "event": "Event",
+    "urgent": "Urgent",
+    "general": "General",
+    "pinned": "Pinned",
+    "no_notices": "No notices"
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "quick_links": "Quick Links",
+    "follow_us": "Follow Us"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Try again",
+    "back": "Back",
+    "next": "Next",
+    "prev": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "all": "All",
+    "date": "Date",
+    "published": "Published",
+    "draft": "Draft",
+    "yes": "Yes",
+    "no": "No",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "not_found": "Not found",
+    "page_not_found": "Page not found"
+  },
+  "admin": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "statistics": "Statistics",
+    "news": "News",
+    "activities": "Activities",
+    "achievements": "Achievements",
+    "gallery": "Gallery",
+    "downloads": "Downloads",
+    "messages": "Messages",
+    "settings": "Settings",
+    "notices": "Notices",
+    "audit_logs": "Audit Logs",
+    "logout": "Sign Out",
+    "profile": "Profile"
+  },
+  "auth": {
+    "login": "Sign In",
+    "logout": "Sign Out",
+    "email": "Email address",
+    "password": "Password",
+    "login_with_google": "Continue with Google",
+    "forgot_password": "Forgot password?",
+    "error_invalid": "Invalid email or password",
+    "error_inactive": "Account has been deactivated",
+    "error_no_account": "No account found in the system"
+  }
+}

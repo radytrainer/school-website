@@ -1,0 +1,169 @@
+import { z } from "zod";
+
+// ─── Auth ─────────────────────────────────────────────────────
+
+export const loginSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+export type LoginInput = z.infer<typeof loginSchema>;
+
+// ─── Contact Form ─────────────────────────────────────────────
+
+export const contactSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters").max(100),
+  email: z.string().email("Invalid email address"),
+  phone: z
+    .string()
+    .regex(/^[\d\s+\-()]*$/, "Invalid phone number")
+    .optional()
+    .or(z.literal("")),
+  subject: z.string().min(3, "Subject is required").max(200),
+  message: z
+    .string()
+    .min(10, "Message must be at least 10 characters")
+    .max(2000),
+});
+export type ContactInput = z.infer<typeof contactSchema>;
+
+// ─── News ─────────────────────────────────────────────────────
+
+export const newsSchema = z.object({
+  title_km: z.string().min(1, "Khmer title is required").max(500),
+  title_en: z.string().min(1, "English title is required").max(500),
+  slug: z
+    .string()
+    .min(1)
+    .regex(/^[a-z0-9-]+$/, "Slug can only contain lowercase letters, numbers, and hyphens"),
+  content_km: z.string().optional(),
+  content_en: z.string().optional(),
+  excerpt_km: z.string().max(500).optional(),
+  excerpt_en: z.string().max(500).optional(),
+  featured_image: z.string().url().optional().or(z.literal("")),
+  category_id: z.string().uuid().optional().or(z.literal("")),
+  is_featured: z.boolean().default(false),
+  status: z.enum(["draft", "published", "archived"]).default("draft"),
+  publish_date: z.string().optional(),
+});
+export type NewsInput = z.infer<typeof newsSchema>;
+
+// ─── Activity ─────────────────────────────────────────────────
+
+export const activitySchema = z.object({
+  title_km: z.string().min(1, "Khmer title is required").max(500),
+  title_en: z.string().min(1, "English title is required").max(500),
+  description_km: z.string().optional(),
+  description_en: z.string().optional(),
+  content_km: z.string().optional(),
+  content_en: z.string().optional(),
+  category_id: z.string().uuid().optional().or(z.literal("")),
+  activity_date: z.string().optional(),
+  location: z.string().max(300).optional(),
+  featured_image: z.string().optional(),
+  video_url: z.string().url().optional().or(z.literal("")),
+  is_featured: z.boolean().default(false),
+  status: z.enum(["draft", "published", "archived"]).default("draft"),
+});
+export type ActivityInput = z.infer<typeof activitySchema>;
+
+// ─── Achievement ──────────────────────────────────────────────
+
+export const achievementSchema = z.object({
+  title_km: z.string().min(1, "Khmer title is required").max(500),
+  title_en: z.string().min(1, "English title is required").max(500),
+  description_km: z.string().optional(),
+  description_en: z.string().optional(),
+  achievement_type: z.enum(["academic", "sports", "arts", "community", "other"]).optional(),
+  award_level: z.enum(["national", "provincial", "district", "school"]).optional(),
+  achievement_date: z.string().optional(),
+  participant_name: z.string().max(300).optional(),
+  image_url: z.string().optional(),
+  is_featured: z.boolean().default(false),
+  status: z.enum(["draft", "published", "archived"]).default("draft"),
+});
+export type AchievementInput = z.infer<typeof achievementSchema>;
+
+// ─── Statistics ───────────────────────────────────────────────
+
+export const statisticsSchema = z.object({
+  academic_year: z
+    .string()
+    .regex(/^\d{4}-\d{4}$/, "Format must be YYYY-YYYY (e.g. 2023-2024)"),
+  total_students: z.coerce.number().int().min(0).optional(),
+  total_teachers: z.coerce.number().int().min(0).optional(),
+  total_classes: z.coerce.number().int().min(0).optional(),
+  grade_a_students: z.coerce.number().int().min(0).optional(),
+  graduation_rate: z.coerce.number().min(0).max(100).optional(),
+  pass_rate: z.coerce.number().min(0).max(100).optional(),
+  male_students: z.coerce.number().int().min(0).optional(),
+  female_students: z.coerce.number().int().min(0).optional(),
+  new_students: z.coerce.number().int().min(0).optional(),
+  is_current: z.boolean().default(false),
+  notes: z.string().max(1000).optional(),
+});
+export type StatisticsInput = z.infer<typeof statisticsSchema>;
+
+// ─── Gallery ──────────────────────────────────────────────────
+
+export const gallerySchema = z.object({
+  title_km: z.string().max(300).optional(),
+  title_en: z.string().max(300).optional(),
+  caption_km: z.string().optional(),
+  caption_en: z.string().optional(),
+  image_url: z.string().min(1, "Image URL is required"),
+  media_type: z.enum(["image", "video"]).default("image"),
+  category: z.string().max(100).optional(),
+  sort_order: z.coerce.number().int().min(0).default(0),
+  status: z.enum(["draft", "published"]).default("draft"),
+});
+export type GalleryInput = z.infer<typeof gallerySchema>;
+
+// ─── Download ─────────────────────────────────────────────────
+
+export const downloadSchema = z.object({
+  title_km: z.string().min(1, "Khmer title is required").max(300),
+  title_en: z.string().min(1, "English title is required").max(300),
+  description_km: z.string().optional(),
+  description_en: z.string().optional(),
+  file_url: z.string().min(1, "File is required"),
+  file_size: z.coerce.number().optional(),
+  file_type: z.string().optional(),
+  category_id: z.string().uuid().optional().or(z.literal("")),
+  academic_year: z.string().optional(),
+  status: z.enum(["draft", "published", "archived"]).default("draft"),
+});
+export type DownloadInput = z.infer<typeof downloadSchema>;
+
+// ─── Notice ───────────────────────────────────────────────────
+
+export const noticeSchema = z.object({
+  title_km: z.string().min(1).max(300),
+  title_en: z.string().min(1).max(300),
+  content_km: z.string().optional(),
+  content_en: z.string().optional(),
+  notice_type: z.enum(["general", "exam", "event", "urgent"]).default("general"),
+  start_date: z.string().optional(),
+  end_date: z.string().optional(),
+  is_pinned: z.boolean().default(false),
+  status: z.enum(["draft", "published", "archived"]).default("draft"),
+});
+export type NoticeInput = z.infer<typeof noticeSchema>;
+
+// ─── User (Admin create/edit) ─────────────────────────────────
+
+export const createUserSchema = z.object({
+  email: z.string().email(),
+  full_name: z.string().min(2).max(100),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  role: z.enum(["administrator", "director", "editor"]),
+});
+export type CreateUserInput = z.infer<typeof createUserSchema>;
+
+export const updateUserSchema = z.object({
+  full_name: z.string().min(2).max(100),
+  email: z.string().email().optional(),
+  role: z.enum(["administrator", "director", "editor"]).optional(),
+  avatar_url: z.string().url().optional().or(z.literal("")),
+  is_active: z.boolean().optional(),
+});
+export type UpdateUserInput = z.infer<typeof updateUserSchema>;
