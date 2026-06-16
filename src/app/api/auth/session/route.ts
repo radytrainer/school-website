@@ -1,20 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { createServerClient } from "@/lib/supabase";
 
 const SESSION_COOKIE = "__session";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 5; // 5 days
 
 export async function POST(request: NextRequest) {
   try {
-    const { idToken } = await request.json();
+    const { idToken, firebase_uid } = await request.json();
     if (!idToken) {
       return NextResponse.json({ error: "Missing idToken" }, { status: 400 });
     }
 
-    // Store the Firebase ID token as the session cookie.
-    // In production, verify this token server-side using Firebase Admin SDK
-    // and issue a proper session cookie. For this implementation we store
-    // the token directly and verify it in protected API routes.
     const cookieStore = await cookies();
     cookieStore.set(SESSION_COOKIE, idToken, {
       httpOnly: true,
@@ -24,7 +21,18 @@ export async function POST(request: NextRequest) {
       path: "/",
     });
 
-    return NextResponse.json({ success: true });
+    // Look up the user record using the service-role client (bypasses RLS)
+    if (firebase_uid) {
+      const supabase = createServerClient();
+      const { data } = await supabase
+        .from("users")
+        .select("*")
+        .eq("firebase_uid", firebase_uid)
+        .single();
+      return NextResponse.json({ success: true, user: data ?? null });
+    }
+
+    return NextResponse.json({ success: true, user: null });
   } catch (error) {
     console.error("Session create error:", error);
     return NextResponse.json({ error: "Failed to create session" }, { status: 500 });

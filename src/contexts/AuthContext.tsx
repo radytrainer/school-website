@@ -38,38 +38,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<SessionUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const syncUserWithSupabase = useCallback(
-    async (fbUser: FirebaseUser): Promise<SessionUser | null> => {
-      const res = await fetch("/api/auth/user", {
+  // Creates the session cookie AND returns the Supabase user in one call.
+  // The server endpoint uses the service-role key so it bypasses RLS.
+  const setSessionCookie = useCallback(
+    async (fbUser: FirebaseUser | null): Promise<SessionUser | null> => {
+      if (!fbUser) {
+        await fetch("/api/auth/session", { method: "DELETE" });
+        return null;
+      }
+      const idToken = await fbUser.getIdToken();
+      const res = await fetch("/api/auth/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firebase_uid: fbUser.uid }),
+        body: JSON.stringify({ idToken, firebase_uid: fbUser.uid }),
       });
-
       if (!res.ok) return null;
       const { user } = await res.json();
       if (!user) return null;
-
       const sessionUser = user as SessionUser;
       if (!sessionUser.is_active) throw new Error("Account is deactivated");
-
       return sessionUser;
     },
     []
   );
-
-  const setSessionCookie = useCallback(async (fbUser: FirebaseUser | null) => {
-    if (!fbUser) {
-      await fetch("/api/auth/session", { method: "DELETE" });
-      return;
-    }
-    const idToken = await fbUser.getIdToken();
-    await fetch("/api/auth/session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idToken }),
-    });
-  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
@@ -77,9 +68,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (fbUser) {
         try {
-          const sessionUser = await syncUserWithSupabase(fbUser);
+          const sessionUser = await setSessionCookie(fbUser);
+          if (!sessionUser) throw new Error("No account found in the system");
           setUser(sessionUser);
-          await setSessionCookie(fbUser);
         } catch {
           setUser(null);
           await signOut(auth);
@@ -93,22 +84,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return unsubscribe;
-  }, [syncUserWithSupabase, setSessionCookie]);
+  }, [setSessionCookie]);
 
   const signInWithEmail = useCallback(
     async (email: string, password: string) => {
-      const cred = await signInWithEmailAndPassword(auth, email, password);
-      const sessionUser = await syncUserWithSupabase(cred.user);
-      if (!sessionUser) throw new Error("No account found in the system");
+      await signInWithEmailAndPassword(auth, email, password);
+      // onAuthStateChanged handles the rest
     },
-    [syncUserWithSupabase]
+    []
   );
 
   const signInWithGoogle = useCallback(async () => {
-    const cred = await signInWithPopup(auth, googleProvider);
-    const sessionUser = await syncUserWithSupabase(cred.user);
-    if (!sessionUser) throw new Error("No account found in the system");
-  }, [syncUserWithSupabase]);
+    await signInWithPopup(auth, googleProvider);
+    // onAuthStateChanged handles the rest
+  }, []);
 
   const logout = useCallback(async () => {
     await signOut(auth);
