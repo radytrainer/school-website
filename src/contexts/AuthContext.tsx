@@ -17,7 +17,6 @@ import {
   onAuthStateChanged,
   type FirebaseUser,
 } from "@/lib/firebase";
-import { supabase } from "@/lib/supabase";
 import type { SessionUser, UserRole, RolePermissions } from "@/types";
 import { ROLE_PERMISSIONS } from "@/types";
 
@@ -41,14 +40,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const syncUserWithSupabase = useCallback(
     async (fbUser: FirebaseUser): Promise<SessionUser | null> => {
-      const { data, error } = await supabase
-        .from("users")
-        .select("*")
-        .eq("firebase_uid", fbUser.uid)
-        .single();
+      const res = await fetch("/api/auth/user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ firebase_uid: fbUser.uid }),
+      });
 
-      if (error || !data) return null;
-      const sessionUser = data as unknown as SessionUser;
+      if (!res.ok) return null;
+      const { user } = await res.json();
+      if (!user) return null;
+
+      const sessionUser = user as SessionUser;
       if (!sessionUser.is_active) throw new Error("Account is deactivated");
 
       return sessionUser;
