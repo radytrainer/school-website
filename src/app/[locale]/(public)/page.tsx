@@ -4,6 +4,8 @@ import HeroSection from "@/components/public/home/HeroSection";
 import StatsSection from "@/components/public/home/StatsSection";
 import NewsSection from "@/components/public/home/NewsSection";
 import AchievementsSection from "@/components/public/home/AchievementsSection";
+import { createServerClient } from "@/lib/supabase";
+import type { Statistics } from "@/types";
 import {
   mockStats,
   mockNews,
@@ -25,11 +27,23 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+async function getCurrentStatistics(): Promise<Statistics> {
+  const supabase = createServerClient();
+  const { data } = await supabase
+    .from("statistics")
+    .select("*")
+    .eq("is_current", true)
+    .maybeSingle();
+  return (data as Statistics | null) ?? mockStats;
+}
+
 export default async function HomePage() {
+  const stats = await getCurrentStatistics();
+
   return (
     <>
       <HeroSection slides={mockHeroSlides} />
-      <StatsSection stats={mockStats} />
+      <StatsSection stats={stats} />
       <NewsSection news={mockNews.slice(0, 6)} />
       <AchievementsSection achievements={mockAchievements.slice(0, 6)} />
     </>
