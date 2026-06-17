@@ -80,7 +80,7 @@ export default function AdminSidebar() {
           <div className="min-w-0">
             <p className="text-sm font-bold text-white leading-tight">Admin Portal</p>
             <p className="text-xs leading-tight mt-0.5" style={{ color: "rgba(255,255,255,0.45)" }}>
-              Public High School
+              Kamrieng High School
             </p>
           </div>
         )}
