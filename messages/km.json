@@ -3,7 +3,6 @@
     "home": "ទំព័រដើម",
     "about": "អំពីសាលា",
     "news": "ព័ត៌មាន",
-    "activities": "សកម្មភាព",
     "achievements": "សិទ្ធិសម្រេច",
     "contact": "ទំនាក់ទំនង",
     "admin": "ផ្ទាំងគ្រប់គ្រង"
@@ -33,15 +32,6 @@
     "categories": "ប្រភេទ",
     "search": "ស្វែងរក",
     "no_results": "រកមិនឃើញ"
-  },
-  "activities": {
-    "title": "សកម្មភាព",
-    "subtitle": "សកម្មភាពរបស់សាលា",
-    "view_all": "មើលទាំងអស់",
-    "all_categories": "ប្រភេទទាំងអស់",
-    "date": "កាលបរិច្ឆេទ",
-    "location": "ទីតាំង",
-    "no_activities": "មិនមានសកម្មភាព"
   },
   "achievements": {
     "title": "សិទ្ធិសម្រេច",
@@ -120,7 +110,6 @@
     "users": "អ្នកប្រើប្រាស់",
     "statistics": "ស្ថិតិ",
     "news": "ព័ត៌មាន",
-    "activities": "សកម្មភាព",
     "achievements": "សិទ្ធិសម្រេច",
     "messages": "សារ",
     "settings": "ការកំណត់",

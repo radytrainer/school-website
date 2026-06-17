@@ -47,25 +47,6 @@ export const newsSchema = z.object({
 });
 export type NewsInput = z.infer<typeof newsSchema>;
 
-// ─── Activity ─────────────────────────────────────────────────
-
-export const activitySchema = z.object({
-  title_km: z.string().min(1, "Khmer title is required").max(500),
-  title_en: z.string().min(1, "English title is required").max(500),
-  description_km: z.string().optional(),
-  description_en: z.string().optional(),
-  content_km: z.string().optional(),
-  content_en: z.string().optional(),
-  category_id: z.string().uuid().optional().or(z.literal("")),
-  activity_date: z.string().optional(),
-  location: z.string().max(300).optional(),
-  featured_image: z.string().optional(),
-  video_url: z.string().url().optional().or(z.literal("")),
-  is_featured: z.boolean().default(false),
-  status: z.enum(["draft", "published", "archived"]).default("draft"),
-});
-export type ActivityInput = z.infer<typeof activitySchema>;
-
 // ─── Achievement ──────────────────────────────────────────────
 
 export const achievementSchema = z.object({

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     default: process.env.NEXT_PUBLIC_SCHOOL_NAME_EN ?? "School Website",
     template: `%s | ${process.env.NEXT_PUBLIC_SCHOOL_NAME_EN ?? "School"}`,
   },
-  description: `Official website of ${process.env.NEXT_PUBLIC_SCHOOL_NAME_EN ?? "our school"} — news, activities, achievements, and more.`,
+  description: `Official website of ${process.env.NEXT_PUBLIC_SCHOOL_NAME_EN ?? "our school"} — news, achievements, and more.`,
   keywords: ["school", "education", "Cambodia", "high school"],
   openGraph: {
     type: "website",

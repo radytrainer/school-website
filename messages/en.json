@@ -3,7 +3,6 @@
     "home": "Home",
     "about": "About",
     "news": "News",
-    "activities": "Activities",
     "achievements": "Achievements",
     "contact": "Contact",
     "admin": "Dashboard"
@@ -33,15 +32,6 @@
     "categories": "Categories",
     "search": "Search news...",
     "no_results": "No news found"
-  },
-  "activities": {
-    "title": "Activities",
-    "subtitle": "School activities and events",
-    "view_all": "View All",
-    "all_categories": "All Categories",
-    "date": "Date",
-    "location": "Location",
-    "no_activities": "No activities found"
   },
   "achievements": {
     "title": "Achievements",
@@ -120,7 +110,6 @@
     "users": "Users",
     "statistics": "Statistics",
     "news": "News",
-    "activities": "Activities",
     "achievements": "Achievements",
     "messages": "Messages",
     "settings": "Settings",

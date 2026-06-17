@@ -11,7 +11,6 @@ export default function Footer() {
     { label: t("nav.home"), href: `/${locale}` },
     { label: t("nav.about"), href: `/${locale}/about` },
     { label: t("nav.news"), href: `/${locale}/news` },
-    { label: t("nav.activities"), href: `/${locale}/activities` },
     { label: t("nav.achievements"), href: `/${locale}/achievements` },
     { label: t("nav.contact"), href: `/${locale}/contact` },
   ];

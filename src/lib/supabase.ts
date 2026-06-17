@@ -28,7 +28,6 @@ export function getPublicUrl(bucket: string, path: string): string {
 
 export const STORAGE_BUCKETS = {
   NEWS_IMAGES: "news-images",
-  ACTIVITY_IMAGES: "activity-images",
   ACHIEVEMENT_IMAGES: "achievement-images",
   AVATARS: "avatars",
   SETTINGS: "settings-images",

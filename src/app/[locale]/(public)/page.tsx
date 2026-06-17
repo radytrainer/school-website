@@ -3,13 +3,11 @@ import { getLocale } from "next-intl/server";
 import HeroSection from "@/components/public/home/HeroSection";
 import StatsSection from "@/components/public/home/StatsSection";
 import NewsSection from "@/components/public/home/NewsSection";
-import ActivitiesSection from "@/components/public/home/ActivitiesSection";
 import AchievementsSection from "@/components/public/home/AchievementsSection";
 import NoticeBoardSection from "@/components/public/home/NoticeBoardSection";
 import {
   mockStats,
   mockNews,
-  mockActivities,
   mockAchievements,
   mockNotices,
   mockHeroSlides,
@@ -35,7 +33,6 @@ export default async function HomePage() {
       <HeroSection slides={mockHeroSlides} />
       <StatsSection stats={mockStats} />
       <NewsSection news={mockNews.slice(0, 6)} />
-      <ActivitiesSection activities={mockActivities.slice(0, 6)} />
       <AchievementsSection achievements={mockAchievements.slice(0, 6)} />
       <NoticeBoardSection notices={mockNotices} />
     </>

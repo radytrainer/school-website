@@ -86,44 +86,6 @@ export interface News {
   category?: NewsCategory;
 }
 
-export interface ActivityCategory {
-  id: string;
-  name_km: string;
-  name_en: string;
-  slug: string;
-  color: string;
-  sort_order: number;
-  created_at: string;
-}
-
-export interface Activity {
-  id: string;
-  title_km: string;
-  title_en: string;
-  slug?: string;
-  description_km?: string;
-  description_en?: string;
-  content_km?: string;
-  content_en?: string;
-  category_id?: string;
-  activity_date?: string;
-  location?: string;
-  location_km?: string;
-  location_en?: string;
-  featured_image?: string;
-  images?: string[];
-  video_url?: string;
-  is_featured?: boolean;
-  status: ContentStatus;
-  view_count?: number;
-  created_by?: string;
-  updated_by?: string;
-  created_at: string;
-  updated_at: string;
-  // Joined
-  category?: ActivityCategory;
-}
-
 export interface Achievement {
   id: string;
   title_km: string;
@@ -309,7 +271,6 @@ export interface RolePermissions {
   canViewAuditLogs: boolean;
   canManageAchievements: boolean;
   canManageNews: boolean;
-  canManageActivities: boolean;
   canManageMessages: boolean;
   canManageNotices: boolean;
 }
@@ -324,7 +285,6 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canViewAuditLogs: true,
     canManageAchievements: true,
     canManageNews: true,
-    canManageActivities: true,
     canManageMessages: true,
     canManageNotices: true,
   },
@@ -337,7 +297,6 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canViewAuditLogs: false,
     canManageAchievements: true,
     canManageNews: true,
-    canManageActivities: true,
     canManageMessages: true,
     canManageNotices: true,
   },
@@ -350,7 +309,6 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canViewAuditLogs: false,
     canManageAchievements: false,
     canManageNews: true,
-    canManageActivities: true,
     canManageMessages: false,
     canManageNotices: false,
   },
