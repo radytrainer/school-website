@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getLocalizedText, cn } from "@/lib/utils";
-import { Eye, Star, ArrowRight, User, GraduationCap } from "lucide-react";
+import { Eye, Star, ArrowRight, User, GraduationCap, Quote, Mail, FileText } from "lucide-react";
 import { mockSchoolInfo, mockLeadership, mockTeachers } from "@/lib/mock-data";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -329,52 +330,75 @@ export default async function AboutPage() {
           {/* Principal featured card */}
           {principal && (
             <div
-              className="bg-white rounded-2xl overflow-hidden mb-8"
-              style={{ boxShadow: "0px 4px 20px rgba(30,78,140,0.07)" }}
+              className="relative bg-white rounded-3xl overflow-hidden mb-10"
+              style={{ boxShadow: "0px 8px 30px rgba(30,78,140,0.10)" }}
             >
-              <div className="grid grid-cols-1 md:grid-cols-[280px_1fr]">
+              {/* Top accent strip */}
+              <div
+                className="h-1.5 w-full"
+                style={{ background: "linear-gradient(90deg, #00376f 0%, #fdbc13 100%)" }}
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-[300px_1fr]">
                 {/* Photo */}
                 <div
-                  className="relative flex items-center justify-center"
-                  style={{
-                    minHeight: 300,
-                    background: "linear-gradient(160deg, #dde9ff 0%, #e6eeff 100%)",
-                  }}
+                  className="flex items-center justify-center p-8 md:p-10"
+                  style={{ background: "linear-gradient(160deg, #eef3ff 0%, #dde9ff 100%)" }}
                 >
-                  <User className="w-28 h-28" style={{ color: "#a8c8ff" }} />
+                  <div className="relative w-44 h-44 md:w-52 md:h-52 rounded-2xl overflow-hidden ring-4 ring-white shadow-xl shrink-0">
+                    {principal.photo_url ? (
+                      <Image
+                        src={principal.photo_url}
+                        alt={getLocalizedText(principal.name_km, principal.name_en, locale) ?? ""}
+                        fill
+                        className="object-cover"
+                        sizes="208px"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center" style={{ background: "#dde9ff" }}>
+                        <User className="w-20 h-20" style={{ color: "#a8c8ff" }} />
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-8 md:p-10 flex flex-col justify-center">
-                  <p
-                    className="text-xs tracking-[0.15em] uppercase font-semibold mb-3"
-                    style={{ color: "#737781" }}
+                <div className="relative p-8 md:p-10 flex flex-col justify-center overflow-hidden">
+                  <Quote
+                    className="absolute -top-2 right-6 w-24 h-24 pointer-events-none"
+                    style={{ color: "#00376f", opacity: 0.06 }}
+                  />
+                  <span
+                    className="relative self-start inline-flex items-center text-xs tracking-[0.15em] uppercase font-semibold px-3 py-1.5 rounded-full mb-4"
+                    style={{ background: "rgba(0,55,111,0.08)", color: "#00376f" }}
                   >
-                    SCHOOL PRINCIPAL
-                  </p>
+                    {km ? "នាយកសាលា" : "School Principal"}
+                  </span>
                   <h3
-                    className={cn("text-2xl md:text-3xl font-bold mb-5", km && "font-khmer")}
+                    className={cn("relative text-2xl md:text-3xl font-bold mb-5", km && "font-khmer")}
                     style={{ color: "#00376f" }}
                   >
                     {getLocalizedText(principal.name_km, principal.name_en, locale)}
                   </h3>
                   <blockquote
-                    className={cn("text-base italic leading-relaxed mb-7 pl-4 border-l-[3px]", km && "font-khmer")}
+                    className={cn("relative text-base italic leading-relaxed mb-7 pl-5 border-l-[3px]", km && "font-khmer")}
                     style={{ color: "#434750", borderColor: "#fdbc13" }}
                   >
                     {`"${getLocalizedText(principal.bio_km, principal.bio_en, locale)}"`}
                   </blockquote>
-                  <div className="flex flex-wrap gap-3">
+                  <div className="relative flex flex-wrap gap-3">
                     <button
-                      className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-90"
                       style={{ background: "#00376f" }}
                     >
+                      <Mail className="w-4 h-4" />
                       {km ? "ការណែនាំ" : "View Message"}
                     </button>
                     <button
-                      className="px-5 py-2.5 rounded-lg text-sm font-semibold border transition-colors hover:bg-[#f0f5ff]"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold border transition-colors hover:bg-[#f0f5ff]"
                       style={{ color: "#00376f", borderColor: "#00376f" }}
                     >
+                      <FileText className="w-4 h-4" />
                       {km ? "ជីវប្រវត្ដិ" : "Biography"}
                     </button>
                   </div>
@@ -389,17 +413,26 @@ export default async function AboutPage() {
               {viceLeaders.map((leader) => (
                 <div
                   key={leader.id}
-                  className="bg-white rounded-2xl p-6 text-center transition-shadow hover:shadow-md"
+                  className="group bg-white rounded-2xl p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                   style={{ boxShadow: "0px 4px 20px rgba(30,78,140,0.07)" }}
                 >
-                  <div
-                    className="w-20 h-20 mx-auto rounded-full mb-4 flex items-center justify-center"
-                    style={{ background: "#e6eeff" }}
-                  >
-                    <User className="w-10 h-10" style={{ color: "#a8c8ff" }} />
+                  <div className="relative w-24 h-24 mx-auto rounded-full mb-4 overflow-hidden ring-4 ring-[#e6eeff] transition-all duration-300 group-hover:ring-[#fdbc13]/40">
+                    {leader.photo_url ? (
+                      <Image
+                        src={leader.photo_url}
+                        alt={getLocalizedText(leader.name_km, leader.name_en, locale) ?? ""}
+                        fill
+                        className="object-cover"
+                        sizes="96px"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center" style={{ background: "#e6eeff" }}>
+                        <User className="w-10 h-10" style={{ color: "#a8c8ff" }} />
+                      </div>
+                    )}
                   </div>
                   <h4
-                    className={cn("font-bold text-base mb-1", km && "font-khmer")}
+                    className={cn("font-bold text-base mb-1 transition-colors group-hover:text-[#00376f]", km && "font-khmer")}
                     style={{ color: "#0d1c2f" }}
                   >
                     {getLocalizedText(leader.name_km, leader.name_en, locale)}
@@ -455,10 +488,10 @@ export default async function AboutPage() {
                   {/* Department header */}
                   <div className="flex items-center gap-3 mb-6">
                     <div
-                      className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                      style={{ background: "#00376f" }}
+                      className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                      style={{ background: "linear-gradient(135deg, #00376f 0%, #1e4e8c 100%)" }}
                     >
-                      <GraduationCap className="w-4 h-4 text-white" />
+                      <GraduationCap className="w-4.5 h-4.5 text-white" />
                     </div>
                     <div>
                       <h3
@@ -479,32 +512,32 @@ export default async function AboutPage() {
                     {teachers.map((teacher) => (
                       <div
                         key={teacher.id}
-                        className="bg-white rounded-xl p-5 text-center border transition-shadow hover:shadow-md"
+                        className="group bg-white rounded-2xl p-5 text-center border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                         style={{
                           borderColor: "#e6eeff",
                           boxShadow: "0px 2px 12px rgba(30,78,140,0.05)",
                         }}
                       >
                         {/* Avatar */}
-                        <div
-                          className="w-16 h-16 mx-auto rounded-full mb-3 flex items-center justify-center"
-                          style={{ background: "#eff4ff" }}
-                        >
+                        <div className="relative w-16 h-16 mx-auto rounded-full mb-3 overflow-hidden ring-2 ring-[#eff4ff] transition-all duration-300 group-hover:ring-[#fdbc13]/40">
                           {teacher.photo_url ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
+                            <Image
                               src={teacher.photo_url}
-                              alt={teacher.name_en}
-                              className="w-full h-full rounded-full object-cover"
+                              alt={km ? (teacher.name_km ?? teacher.name_en) : teacher.name_en}
+                              fill
+                              className="object-cover"
+                              sizes="64px"
                             />
                           ) : (
-                            <User className="w-8 h-8" style={{ color: "#a8c8ff" }} />
+                            <div className="w-full h-full flex items-center justify-center" style={{ background: "#eff4ff" }}>
+                              <User className="w-8 h-8" style={{ color: "#a8c8ff" }} />
+                            </div>
                           )}
                         </div>
 
                         {/* Name */}
                         <h4
-                          className={cn("font-semibold text-sm mb-1 leading-tight", km && "font-khmer")}
+                          className={cn("font-semibold text-sm mb-1 leading-tight transition-colors group-hover:text-[#00376f]", km && "font-khmer")}
                           style={{ color: "#0d1c2f" }}
                         >
                           {km ? teacher.name_km : teacher.name_en}
