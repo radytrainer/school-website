@@ -1,6 +1,6 @@
 "use server";
 
-import { createServerClient, STORAGE_BUCKETS, type StorageBucket } from "./supabase";
+import { createServerClient, type StorageBucket } from "./supabase";
 
 interface UploadResult {
   url: string;
@@ -64,32 +64,4 @@ export async function uploadImage(
   }
 
   return uploadFile(file, bucket, folder);
-}
-
-export async function uploadDocument(
-  formData: FormData,
-  folder?: string
-): Promise<UploadResult & { name: string; type: string }> {
-  const file = formData.get("file") as File;
-  if (!file) throw new Error("No file provided");
-
-  const allowed = [
-    "application/pdf",
-    "application/msword",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "application/vnd.ms-excel",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  ];
-
-  if (!allowed.includes(file.type)) {
-    throw new Error("Only PDF, Word, and Excel files are allowed");
-  }
-
-  const MAX_SIZE = 20 * 1024 * 1024; // 20 MB
-  if (file.size > MAX_SIZE) {
-    throw new Error("Document must be smaller than 20 MB");
-  }
-
-  const result = await uploadFile(file, STORAGE_BUCKETS.DOCUMENTS, folder);
-  return { ...result, name: file.name, type: file.type };
 }

@@ -103,37 +103,6 @@ export const statisticsSchema = z.object({
 });
 export type StatisticsInput = z.infer<typeof statisticsSchema>;
 
-// ─── Gallery ──────────────────────────────────────────────────
-
-export const gallerySchema = z.object({
-  title_km: z.string().max(300).optional(),
-  title_en: z.string().max(300).optional(),
-  caption_km: z.string().optional(),
-  caption_en: z.string().optional(),
-  image_url: z.string().min(1, "Image URL is required"),
-  media_type: z.enum(["image", "video"]).default("image"),
-  category: z.string().max(100).optional(),
-  sort_order: z.coerce.number().int().min(0).default(0),
-  status: z.enum(["draft", "published"]).default("draft"),
-});
-export type GalleryInput = z.infer<typeof gallerySchema>;
-
-// ─── Download ─────────────────────────────────────────────────
-
-export const downloadSchema = z.object({
-  title_km: z.string().min(1, "Khmer title is required").max(300),
-  title_en: z.string().min(1, "English title is required").max(300),
-  description_km: z.string().optional(),
-  description_en: z.string().optional(),
-  file_url: z.string().min(1, "File is required"),
-  file_size: z.coerce.number().optional(),
-  file_type: z.string().optional(),
-  category_id: z.string().uuid().optional().or(z.literal("")),
-  academic_year: z.string().optional(),
-  status: z.enum(["draft", "published", "archived"]).default("draft"),
-});
-export type DownloadInput = z.infer<typeof downloadSchema>;
-
 // ─── Notice ───────────────────────────────────────────────────
 
 export const noticeSchema = z.object({

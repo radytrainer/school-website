@@ -38,8 +38,6 @@ export default function Navbar() {
     { key: "news", href: `/${locale}/news` },
     { key: "activities", href: `/${locale}/activities` },
     { key: "achievements", href: `/${locale}/achievements` },
-    { key: "gallery", href: `/${locale}/gallery` },
-    { key: "downloads", href: `/${locale}/downloads` },
     { key: "contact", href: `/${locale}/contact` },
   ];
 

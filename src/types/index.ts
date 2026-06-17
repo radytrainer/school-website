@@ -143,77 +143,6 @@ export interface Achievement {
   updated_at: string;
 }
 
-export interface Gallery {
-  id: string;
-  title_km?: string;
-  title_en?: string;
-  caption_km?: string;
-  caption_en?: string;
-  image_url?: string;
-  cover_image?: string;
-  media_type?: string;
-  category?: string;
-  is_featured?: boolean;
-  sort_order?: number;
-  status: ContentStatus;
-  created_by?: string;
-  updated_by?: string;
-  created_at: string;
-  updated_at: string;
-  media?: Media[];
-  media_count?: number;
-}
-
-export interface Media {
-  id: string;
-  gallery_id?: string;
-  title_km?: string;
-  title_en?: string;
-  url: string;
-  thumbnail?: string;
-  media_type: MediaType;
-  file_size?: number;
-  width?: number;
-  height?: number;
-  duration?: number;
-  sort_order: number;
-  is_featured: boolean;
-  created_by?: string;
-  created_at: string;
-}
-
-export interface DownloadCategory {
-  id: string;
-  name_km: string;
-  name_en: string;
-  slug: string;
-  icon: string;
-  sort_order: number;
-  created_at: string;
-}
-
-export interface Download {
-  id: string;
-  title_km: string;
-  title_en: string;
-  description_km?: string;
-  description_en?: string;
-  file_url: string;
-  file_name?: string;
-  file_size?: number;
-  file_type?: string;
-  category_id?: string;
-  academic_year?: string;
-  download_count?: number;
-  is_active?: boolean;
-  status: ContentStatus;
-  created_by?: string;
-  updated_by?: string;
-  created_at: string;
-  updated_at: string;
-  category?: DownloadCategory;
-}
-
 export interface Message {
   id: string;
   name: string;
@@ -381,8 +310,6 @@ export interface RolePermissions {
   canManageAchievements: boolean;
   canManageNews: boolean;
   canManageActivities: boolean;
-  canManageGallery: boolean;
-  canManageDownloads: boolean;
   canManageMessages: boolean;
   canManageNotices: boolean;
 }
@@ -398,8 +325,6 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canManageAchievements: true,
     canManageNews: true,
     canManageActivities: true,
-    canManageGallery: true,
-    canManageDownloads: true,
     canManageMessages: true,
     canManageNotices: true,
   },
@@ -413,8 +338,6 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canManageAchievements: true,
     canManageNews: true,
     canManageActivities: true,
-    canManageGallery: true,
-    canManageDownloads: true,
     canManageMessages: true,
     canManageNotices: true,
   },
@@ -428,8 +351,6 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canManageAchievements: false,
     canManageNews: true,
     canManageActivities: true,
-    canManageGallery: true,
-    canManageDownloads: true,
     canManageMessages: false,
     canManageNotices: false,
   },

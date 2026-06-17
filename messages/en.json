@@ -5,8 +5,6 @@
     "news": "News",
     "activities": "Activities",
     "achievements": "Achievements",
-    "gallery": "Gallery",
-    "downloads": "Downloads",
     "contact": "Contact",
     "admin": "Dashboard"
   },
@@ -56,22 +54,6 @@
     "provincial": "Provincial",
     "district": "District",
     "school_level": "School Level"
-  },
-  "gallery": {
-    "title": "Gallery",
-    "subtitle": "Photo and video albums",
-    "view_all": "View All",
-    "photos": "Photos",
-    "videos": "Videos"
-  },
-  "downloads": {
-    "title": "Download Center",
-    "subtitle": "Official documents and forms",
-    "download": "Download",
-    "view_all": "View All",
-    "size": "Size",
-    "type": "Type",
-    "count": "Downloads"
   },
   "contact": {
     "title": "Contact Us",
@@ -140,8 +122,6 @@
     "news": "News",
     "activities": "Activities",
     "achievements": "Achievements",
-    "gallery": "Gallery",
-    "downloads": "Downloads",
     "messages": "Messages",
     "settings": "Settings",
     "notices": "Notices",

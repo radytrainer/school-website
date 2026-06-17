@@ -5,8 +5,6 @@
     "news": "ព័ត៌មាន",
     "activities": "សកម្មភាព",
     "achievements": "សិទ្ធិសម្រេច",
-    "gallery": "វត្ថុបង្ហាញ",
-    "downloads": "ទាញយក",
     "contact": "ទំនាក់ទំនង",
     "admin": "ផ្ទាំងគ្រប់គ្រង"
   },
@@ -56,22 +54,6 @@
     "provincial": "ខេត្ត",
     "district": "ស្រុក",
     "school_level": "សាលា"
-  },
-  "gallery": {
-    "title": "វត្ថុបង្ហាញ",
-    "subtitle": "ឯកតានៃការថតរូប",
-    "view_all": "មើលទាំងអស់",
-    "photos": "រូបភាព",
-    "videos": "វីឌីអូ"
-  },
-  "downloads": {
-    "title": "មជ្ឈមណ្ឌលទាញយក",
-    "subtitle": "ឯកសារផ្លូវការ",
-    "download": "ទាញយក",
-    "view_all": "មើលទាំងអស់",
-    "size": "ទំហំ",
-    "type": "ប្រភេទ",
-    "count": "ចំនួនទាញ"
   },
   "contact": {
     "title": "ទំនាក់ទំនង",
@@ -140,8 +122,6 @@
     "news": "ព័ត៌មាន",
     "activities": "សកម្មភាព",
     "achievements": "សិទ្ធិសម្រេច",
-    "gallery": "វត្ថុបង្ហាញ",
-    "downloads": "ឯកសារ",
     "messages": "សារ",
     "settings": "ការកំណត់",
     "notices": "ការជូនដំណឹង",

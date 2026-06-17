@@ -30,8 +30,6 @@ export const STORAGE_BUCKETS = {
   NEWS_IMAGES: "news-images",
   ACTIVITY_IMAGES: "activity-images",
   ACHIEVEMENT_IMAGES: "achievement-images",
-  GALLERY_IMAGES: "gallery-images",
-  DOCUMENTS: "documents",
   AVATARS: "avatars",
   SETTINGS: "settings-images",
 } as const;

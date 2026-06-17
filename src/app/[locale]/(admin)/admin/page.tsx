@@ -1,7 +1,7 @@
 import { createServerClient } from "@/lib/supabase";
 import { getLocale } from "next-intl/server";
 import {
-  Newspaper, Activity, Download, MessageSquare,
+  Newspaper, Activity, MessageSquare,
   TrendingUp, TrendingDown, ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
@@ -11,11 +11,10 @@ import VisitorChartWrapper from "@/components/admin/VisitorChartWrapper";
 
 async function getDashboardData() {
   const supabase = createServerClient();
-  const [newsCount, activitiesCount, downloadsCount, unreadMessages, recentMessages, auditLogs] =
+  const [newsCount, activitiesCount, unreadMessages, recentMessages, auditLogs] =
     await Promise.all([
       supabase.from("news").select("*", { count: "exact", head: true }),
       supabase.from("activities").select("*", { count: "exact", head: true }),
-      supabase.from("downloads").select("*", { count: "exact", head: true }),
       supabase.from("messages").select("*", { count: "exact", head: true }).eq("status", "unread"),
       supabase.from("messages").select("*").order("created_at", { ascending: false }).limit(6),
       supabase.from("audit_logs").select("*").order("created_at", { ascending: false }).limit(8),
@@ -24,7 +23,6 @@ async function getDashboardData() {
   return {
     newsCount: newsCount.count ?? 0,
     activitiesCount: activitiesCount.count ?? 0,
-    downloadsCount: downloadsCount.count ?? 0,
     unreadMessages: unreadMessages.count ?? 0,
     recentMessages: (recentMessages.data ?? []) as Message[],
     auditLogs: (auditLogs.data ?? []) as AuditLog[],
@@ -68,15 +66,6 @@ export default async function AdminDashboardPage() {
       href: `/${locale}/admin/activities`,
       iconBg: "#dcfce7",
       iconColor: "#15803d",
-    },
-    {
-      label: locale === "km" ? "ឯកសារទាញយក" : "Downloads",
-      value: data.downloadsCount,
-      icon: Download,
-      trend: +3,
-      href: `/${locale}/admin/downloads`,
-      iconBg: "#ede9fe",
-      iconColor: "#7c3aed",
     },
     {
       label: locale === "km" ? "សារមិនអាន" : "Unread Messages",
