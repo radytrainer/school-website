@@ -84,21 +84,6 @@ export const statisticsSchema = z.object({
 });
 export type StatisticsInput = z.infer<typeof statisticsSchema>;
 
-// ─── Notice ───────────────────────────────────────────────────
-
-export const noticeSchema = z.object({
-  title_km: z.string().min(1).max(300),
-  title_en: z.string().min(1).max(300),
-  content_km: z.string().optional(),
-  content_en: z.string().optional(),
-  notice_type: z.enum(["general", "exam", "event", "urgent"]).default("general"),
-  start_date: z.string().optional(),
-  end_date: z.string().optional(),
-  is_pinned: z.boolean().default(false),
-  status: z.enum(["draft", "published", "archived"]).default("draft"),
-});
-export type NoticeInput = z.infer<typeof noticeSchema>;
-
 // ─── User (Admin create/edit) ─────────────────────────────────
 
 export const createUserSchema = z.object({

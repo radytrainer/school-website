@@ -68,15 +68,6 @@
     "values": "Core Values",
     "leadership": "Leadership"
   },
-  "notice": {
-    "title": "Notice Board",
-    "exam": "Exam",
-    "event": "Event",
-    "urgent": "Urgent",
-    "general": "General",
-    "pinned": "Pinned",
-    "no_notices": "No notices"
-  },
   "footer": {
     "rights": "All rights reserved",
     "quick_links": "Quick Links",
@@ -113,7 +104,6 @@
     "achievements": "Achievements",
     "messages": "Messages",
     "settings": "Settings",
-    "notices": "Notices",
     "audit_logs": "Audit Logs",
     "logout": "Sign Out",
     "profile": "Profile"

@@ -4,12 +4,10 @@ import HeroSection from "@/components/public/home/HeroSection";
 import StatsSection from "@/components/public/home/StatsSection";
 import NewsSection from "@/components/public/home/NewsSection";
 import AchievementsSection from "@/components/public/home/AchievementsSection";
-import NoticeBoardSection from "@/components/public/home/NoticeBoardSection";
 import {
   mockStats,
   mockNews,
   mockAchievements,
-  mockNotices,
   mockHeroSlides,
 } from "@/lib/mock-data";
 
@@ -34,7 +32,6 @@ export default async function HomePage() {
       <StatsSection stats={mockStats} />
       <NewsSection news={mockNews.slice(0, 6)} />
       <AchievementsSection achievements={mockAchievements.slice(0, 6)} />
-      <NoticeBoardSection notices={mockNotices} />
     </>
   );
 }

@@ -122,23 +122,6 @@ export interface Message {
   updated_at: string;
 }
 
-export interface Notice {
-  id: string;
-  title_km: string;
-  title_en: string;
-  content_km?: string;
-  content_en?: string;
-  notice_type: string;
-  start_date?: string;
-  end_date?: string;
-  is_pinned: boolean;
-  status: ContentStatus;
-  created_by?: string;
-  updated_by?: string;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface AuditLog {
   id: string;
   user_id?: string;
@@ -272,7 +255,6 @@ export interface RolePermissions {
   canManageAchievements: boolean;
   canManageNews: boolean;
   canManageMessages: boolean;
-  canManageNotices: boolean;
 }
 
 export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
@@ -286,7 +268,6 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canManageAchievements: true,
     canManageNews: true,
     canManageMessages: true,
-    canManageNotices: true,
   },
   director: {
     canManageUsers: false,
@@ -298,7 +279,6 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canManageAchievements: true,
     canManageNews: true,
     canManageMessages: true,
-    canManageNotices: true,
   },
   editor: {
     canManageUsers: false,
@@ -310,6 +290,5 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canManageAchievements: false,
     canManageNews: true,
     canManageMessages: false,
-    canManageNotices: false,
   },
 };

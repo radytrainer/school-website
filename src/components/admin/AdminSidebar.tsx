@@ -7,7 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Newspaper, Trophy,
-  MessageSquare, Users, Settings, BarChart3, Bell,
+  MessageSquare, Users, Settings, BarChart3,
   School, ChevronLeft, ChevronRight, LogOut, X, Plus,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -28,7 +28,7 @@ interface NavGroup {
 
 const NAV_GROUPS: NavGroup[] = [
   { label: "Overview", keys: ["dashboard", "statistics"] },
-  { label: "Content", keys: ["news", "achievements", "notices"] },
+  { label: "Content", keys: ["news", "achievements"] },
   { label: "Inbox", keys: ["messages"] },
   { label: "System", keys: ["users", "settings"] },
 ];
@@ -46,7 +46,6 @@ export default function AdminSidebar() {
     { key: "statistics", href: `/${locale}/admin/statistics`, icon: <BarChart3 className="w-4.5 h-4.5" /> },
     { key: "news", href: `/${locale}/admin/news`, icon: <Newspaper className="w-4.5 h-4.5" /> },
     { key: "achievements", href: `/${locale}/admin/achievements`, icon: <Trophy className="w-4.5 h-4.5" /> },
-    { key: "notices", href: `/${locale}/admin/notices`, icon: <Bell className="w-4.5 h-4.5" /> },
     { key: "messages", href: `/${locale}/admin/messages`, icon: <MessageSquare className="w-4.5 h-4.5" /> },
     { key: "users", href: `/${locale}/admin/users`, icon: <Users className="w-4.5 h-4.5" />, permission: "canManageUsers" },
     { key: "settings", href: `/${locale}/admin/settings`, icon: <Settings className="w-4.5 h-4.5" />, permission: "canManageSettings" },
