@@ -38,6 +38,7 @@ export default function Navbar() {
     { key: "news", href: `/${locale}/news` },
     { key: "achievements", href: `/${locale}/achievements` },
     { key: "contact", href: `/${locale}/contact` },
+    { key: "donate", href: `/${locale}/donate` },
   ];
 
   const switchLocale = (newLocale: Locale) => {
@@ -84,7 +85,11 @@ export default function Navbar() {
                 href={link.href}
                 className={cn(
                   "px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                  isActive(link.href)
+                  link.key === "donate"
+                    ? isActive(link.href)
+                      ? "bg-school-gold-500 text-white"
+                      : "bg-school-gold-500 text-white hover:bg-school-gold-600"
+                    : isActive(link.href)
                     ? "bg-school-blue-800 text-white"
                     : isTransparent
                     ? "text-white/90 hover:text-white hover:bg-white/10"

@@ -33,6 +33,7 @@ export default async function Footer() {
     { label: t("nav.news"), href: `/${locale}/news` },
     { label: t("nav.achievements"), href: `/${locale}/achievements` },
     { label: t("nav.contact"), href: `/${locale}/contact` },
+    { label: t("nav.donate"), href: `/${locale}/donate` },
   ];
 
   const schoolName =
