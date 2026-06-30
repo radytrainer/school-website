@@ -7,7 +7,26 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatShortDate, getLocalizedText, truncate } from "@/lib/utils";
 import { Calendar, ArrowRight, Search } from "lucide-react";
+import { createServerClient } from "@/lib/supabase";
+import type { News, NewsCategory } from "@/types";
 import { mockNews, mockNewsCategories } from "@/lib/mock-data";
+
+async function getNewsData() {
+  const supabase = createServerClient();
+  const [{ data: news }, { data: categories }] = await Promise.all([
+    supabase
+      .from("news")
+      .select("*, category:news_categories(*)")
+      .eq("status", "published")
+      .order("publish_date", { ascending: false }),
+    supabase.from("news_categories").select("*").order("sort_order"),
+  ]);
+
+  return {
+    news: news && news.length > 0 ? (news as News[]) : mockNews.filter((n) => n.status === "published"),
+    categories: categories && categories.length > 0 ? (categories as NewsCategory[]) : mockNewsCategories,
+  };
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("news");
@@ -26,9 +45,9 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
   const page = parseInt(params.page ?? "1");
   const pageSize = 9;
 
-  const categories = mockNewsCategories;
+  const { news: allNews, categories } = await getNewsData();
 
-  let filtered = mockNews.filter((n) => n.status === "published");
+  let filtered = allNews;
   if (categorySlug) {
     const cat = categories.find((c) => c.slug === categorySlug);
     if (cat) filtered = filtered.filter((n) => n.category_id === cat.id);

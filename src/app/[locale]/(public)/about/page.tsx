@@ -3,7 +3,24 @@ import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getLocalizedText, cn } from "@/lib/utils";
 import { Eye, Star, ArrowRight, User, GraduationCap, Quote, Mail, FileText } from "lucide-react";
+import { createServerClient } from "@/lib/supabase";
+import type { Leadership, SchoolInfo, Teacher } from "@/types";
 import { mockSchoolInfo, mockLeadership, mockTeachers } from "@/lib/mock-data";
+
+async function getAboutData() {
+  const supabase = createServerClient();
+  const [{ data: info }, { data: leaders }, { data: teacherRows }] = await Promise.all([
+    supabase.from("school_info").select("*"),
+    supabase.from("leadership").select("*").eq("is_active", true).order("sort_order"),
+    supabase.from("teachers").select("*").eq("is_active", true).order("sort_order"),
+  ]);
+
+  return {
+    schoolInfo: info && info.length > 0 ? (info as SchoolInfo[]) : mockSchoolInfo,
+    leadership: leaders && leaders.length > 0 ? (leaders as Leadership[]) : mockLeadership,
+    teachers: teacherRows && teacherRows.length > 0 ? (teacherRows as Teacher[]) : mockTeachers,
+  };
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("about");
@@ -54,14 +71,15 @@ export default async function AboutPage() {
   const locale = await getLocale();
   const t = await getTranslations("about");
   const km = locale === "km";
+  const { schoolInfo, leadership, teachers } = await getAboutData();
 
-  const leaders = mockLeadership
+  const leaders = leadership
     .filter((l) => l.is_active)
     .sort((a, b) => a.sort_order - b.sort_order);
   const principal = leaders[0];
   const viceLeaders = leaders.slice(1);
 
-  const infoMap = Object.fromEntries(mockSchoolInfo.map((i) => [i.section, i]));
+  const infoMap = Object.fromEntries(schoolInfo.map((i) => [i.section, i]));
   const vision = infoMap["vision"];
   const mission = infoMap["mission"];
   const history = infoMap["history"];
@@ -464,14 +482,14 @@ export default async function AboutPage() {
             </p>
             <p className={cn("text-sm", km && "font-khmer")} style={{ color: "#434750" }}>
               {km
-                ? `គ្រូបង្រៀន ${mockTeachers.filter((t) => t.is_active).length} រូប ដែលមានការប្តេជ្ញាចិត្ត`
-                : `${mockTeachers.filter((t) => t.is_active).length} dedicated educators shaping the next generation`}
+                ? `គ្រូបង្រៀន ${teachers.filter((t) => t.is_active).length} រូប ដែលមានការប្តេជ្ញាចិត្ត`
+                : `${teachers.filter((t) => t.is_active).length} dedicated educators shaping the next generation`}
             </p>
           </div>
 
           {/* Grouped by department */}
           {(() => {
-            const active = mockTeachers.filter((t) => t.is_active);
+            const active = teachers.filter((t) => t.is_active);
             const depts = Array.from(
               new Map(
                 active.map((t) => [

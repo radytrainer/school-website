@@ -5,7 +5,7 @@ import StatsSection from "@/components/public/home/StatsSection";
 import NewsSection from "@/components/public/home/NewsSection";
 import AchievementsSection from "@/components/public/home/AchievementsSection";
 import { createServerClient } from "@/lib/supabase";
-import type { Statistics } from "@/types";
+import type { Achievement, News, Statistics } from "@/types";
 import {
   mockStats,
   mockNews,
@@ -37,15 +37,41 @@ async function getCurrentStatistics(): Promise<Statistics> {
   return (data as Statistics | null) ?? mockStats;
 }
 
+async function getLatestNews(): Promise<News[]> {
+  const supabase = createServerClient();
+  const { data } = await supabase
+    .from("news")
+    .select("*, category:news_categories(*)")
+    .eq("status", "published")
+    .order("publish_date", { ascending: false })
+    .limit(6);
+  return data && data.length > 0 ? (data as News[]) : mockNews.slice(0, 6);
+}
+
+async function getLatestAchievements(): Promise<Achievement[]> {
+  const supabase = createServerClient();
+  const { data } = await supabase
+    .from("achievements")
+    .select("*")
+    .eq("status", "published")
+    .order("achievement_date", { ascending: false })
+    .limit(6);
+  return data && data.length > 0 ? (data as Achievement[]) : mockAchievements.slice(0, 6);
+}
+
 export default async function HomePage() {
-  const stats = await getCurrentStatistics();
+  const [stats, news, achievements] = await Promise.all([
+    getCurrentStatistics(),
+    getLatestNews(),
+    getLatestAchievements(),
+  ]);
 
   return (
     <>
       <HeroSection slides={mockHeroSlides} />
       <StatsSection stats={stats} />
-      <NewsSection news={mockNews.slice(0, 6)} />
-      <AchievementsSection achievements={mockAchievements.slice(0, 6)} />
+      <NewsSection news={news} />
+      <AchievementsSection achievements={achievements} />
     </>
   );
 }

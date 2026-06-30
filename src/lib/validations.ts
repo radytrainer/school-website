@@ -84,6 +84,24 @@ export const statisticsSchema = z.object({
 });
 export type StatisticsInput = z.infer<typeof statisticsSchema>;
 
+// ─── Teacher ──────────────────────────────────────────────────
+
+export const teacherSchema = z.object({
+  name_km: z.string().min(1, "Khmer name is required").max(200),
+  name_en: z.string().min(1, "English name is required").max(200),
+  subject_km: z.string().max(200).optional(),
+  subject_en: z.string().max(200).optional(),
+  department_km: z.string().max(200).optional(),
+  department_en: z.string().max(200).optional(),
+  qualification_km: z.string().max(300).optional(),
+  qualification_en: z.string().max(300).optional(),
+  photo_url: z.string().optional(),
+  years_experience: z.coerce.number().int().min(0).optional(),
+  is_active: z.boolean().default(true),
+  sort_order: z.coerce.number().int().min(0).default(0),
+});
+export type TeacherInput = z.infer<typeof teacherSchema>;
+
 // ─── User (Admin create/edit) ─────────────────────────────────
 
 export const createUserSchema = z.object({

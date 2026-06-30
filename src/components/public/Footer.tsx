@@ -1,11 +1,31 @@
 import Link from "next/link";
-import { useTranslations, useLocale } from "next-intl";
+import { getTranslations, getLocale } from "next-intl/server";
 import { School, Phone, Mail, MapPin, Facebook, Youtube } from "lucide-react";
 import type { Locale } from "@/i18n/config";
+import { createServerClient } from "@/lib/supabase";
 
-export default function Footer() {
-  const t = useTranslations();
-  const locale = useLocale() as Locale;
+async function getFooterContactInfo(locale: string) {
+  const supabase = createServerClient();
+  const { data } = await supabase.from("settings").select("key, value");
+  const settings: Record<string, string> = {};
+  (data ?? []).forEach((s: { key: string; value: string }) => { settings[s.key] = s.value; });
+
+  const km = locale === "km";
+  return {
+    address:
+      (km ? settings.school_address_km : settings.school_address_en) ??
+      (km ? "ភ្នំពេញ, កម្ពុជា" : "Phnom Penh, Cambodia"),
+    phone: settings.school_phone ?? "+855 23 000 000",
+    email: settings.school_email ?? "info@school.edu.kh",
+    facebook: settings.school_facebook ?? "#",
+    youtube: settings.school_youtube ?? "#",
+  };
+}
+
+export default async function Footer() {
+  const t = await getTranslations();
+  const locale = (await getLocale()) as Locale;
+  const { address, phone, email, facebook, youtube } = await getFooterContactInfo(locale);
 
   const quickLinks = [
     { label: t("nav.home"), href: `/${locale}` },
@@ -40,30 +60,28 @@ export default function Footer() {
             <div className="space-y-2 text-sm text-school-blue-200">
               <div className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-school-gold-400" />
-                <span>
-                  {locale === "km" ? "ភ្នំពេញ, កម្ពុជា" : "Phnom Penh, Cambodia"}
-                </span>
+                <span>{address}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 shrink-0 text-school-gold-400" />
-                <span>+855 23 000 000</span>
+                <span>{phone}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 shrink-0 text-school-gold-400" />
-                <span>info@school.edu.kh</span>
+                <span>{email}</span>
               </div>
             </div>
             {/* Social */}
             <div className="flex gap-3 mt-4">
               <a
-                href="#"
+                href={facebook}
                 className="w-9 h-9 rounded-full bg-white/10 hover:bg-school-gold-500 flex items-center justify-center transition-colors"
                 aria-label="Facebook"
               >
                 <Facebook className="w-4 h-4" />
               </a>
               <a
-                href="#"
+                href={youtube}
                 className="w-9 h-9 rounded-full bg-white/10 hover:bg-red-500 flex items-center justify-center transition-colors"
                 aria-label="YouTube"
               >
