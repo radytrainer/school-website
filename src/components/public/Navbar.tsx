@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, School, Globe } from "lucide-react";
+import { Menu, X, School, Globe, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { locales, localeNames, localeFlags, type Locale } from "@/i18n/config";
@@ -39,7 +39,6 @@ export default function Navbar() {
     { key: "news", href: `/${locale}/news` },
     { key: "achievements", href: `/${locale}/achievements` },
     { key: "contact", href: `/${locale}/contact` },
-    { key: "donate", href: `/${locale}/donate` },
   ];
 
   const switchLocale = (newLocale: Locale) => {
@@ -86,11 +85,7 @@ export default function Navbar() {
                 href={link.href}
                 className={cn(
                   "px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                  link.key === "donate"
-                    ? isActive(link.href)
-                      ? "bg-school-gold-500 text-white"
-                      : "bg-school-gold-500 text-white hover:bg-school-gold-600"
-                    : isActive(link.href)
+                  isActive(link.href)
                     ? "bg-school-blue-800 text-white"
                     : isTransparent
                     ? "text-white/90 hover:text-white hover:bg-white/10"
@@ -104,6 +99,18 @@ export default function Navbar() {
 
           {/* Right controls */}
           <div className="flex items-center gap-2">
+            {/* Donate CTA */}
+            <Link
+              href={`/${locale}/donate`}
+              aria-label={t("donate")}
+              className="group relative inline-flex items-center gap-1.5 overflow-hidden rounded-full px-2.5 py-2 sm:px-4 text-sm font-semibold text-white shadow-md shadow-school-gold-500/30 transition-all duration-300 hover:shadow-lg hover:shadow-school-gold-500/50 hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <span className="absolute inset-0 bg-gradient-to-r from-school-gold-500 to-school-gold-600 transition-opacity duration-300 group-hover:opacity-0" />
+              <span className="absolute inset-0 bg-gradient-to-r from-school-gold-400 to-school-gold-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <Heart className="relative w-4 h-4 shrink-0 fill-white transition-transform duration-300 group-hover:scale-110" />
+              <span className="relative hidden sm:inline">{t("donate")}</span>
+            </Link>
+
             {/* Locale switcher */}
             <div className="flex items-center gap-1">
               <Globe
