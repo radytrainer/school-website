@@ -3,7 +3,7 @@
 import { createServerClient } from "@/lib/supabase";
 import { teacherSchema, type TeacherInput } from "@/lib/validations";
 import type { ActionResult } from "@/types";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function createTeacher(
   data: TeacherInput
@@ -18,6 +18,7 @@ export async function createTeacher(
   if (error) return { success: false, error: error.message };
 
   revalidatePath("/[locale]/(public)/about", "page");
+  revalidateTag("teachers");
   return { success: true };
 }
 
@@ -38,6 +39,7 @@ export async function updateTeacher(
   if (error) return { success: false, error: error.message };
 
   revalidatePath("/[locale]/(public)/about", "page");
+  revalidateTag("teachers");
   return { success: true };
 }
 
@@ -47,5 +49,6 @@ export async function deleteTeacher(id: string): Promise<ActionResult<void>> {
   if (error) return { success: false, error: error.message };
 
   revalidatePath("/[locale]/(public)/about", "page");
+  revalidateTag("teachers");
   return { success: true };
 }

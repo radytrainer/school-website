@@ -4,14 +4,8 @@ import HeroSection from "@/components/public/home/HeroSection";
 import StatsSection from "@/components/public/home/StatsSection";
 import NewsSection from "@/components/public/home/NewsSection";
 import AchievementsSection from "@/components/public/home/AchievementsSection";
-import { createServerClient } from "@/lib/supabase";
-import type { Achievement, News, Statistics } from "@/types";
-import {
-  mockStats,
-  mockNews,
-  mockAchievements,
-  mockHeroSlides,
-} from "@/lib/mock-data";
+import { getCurrentStatistics, getPublishedAchievements, getPublishedNews } from "@/lib/queries";
+import { mockHeroSlides } from "@/lib/mock-data";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -27,44 +21,14 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-async function getCurrentStatistics(): Promise<Statistics> {
-  const supabase = createServerClient();
-  const { data } = await supabase
-    .from("statistics")
-    .select("*")
-    .eq("is_current", true)
-    .maybeSingle();
-  return (data as Statistics | null) ?? mockStats;
-}
-
-async function getLatestNews(): Promise<News[]> {
-  const supabase = createServerClient();
-  const { data } = await supabase
-    .from("news")
-    .select("*, category:news_categories(*)")
-    .eq("status", "published")
-    .order("publish_date", { ascending: false })
-    .limit(6);
-  return data && data.length > 0 ? (data as News[]) : mockNews.slice(0, 6);
-}
-
-async function getLatestAchievements(): Promise<Achievement[]> {
-  const supabase = createServerClient();
-  const { data } = await supabase
-    .from("achievements")
-    .select("*")
-    .eq("status", "published")
-    .order("achievement_date", { ascending: false })
-    .limit(6);
-  return data && data.length > 0 ? (data as Achievement[]) : mockAchievements.slice(0, 6);
-}
-
 export default async function HomePage() {
-  const [stats, news, achievements] = await Promise.all([
+  const [stats, allNews, allAchievements] = await Promise.all([
     getCurrentStatistics(),
-    getLatestNews(),
-    getLatestAchievements(),
+    getPublishedNews(),
+    getPublishedAchievements(),
   ]);
+  const news = allNews.slice(0, 6);
+  const achievements = allAchievements.slice(0, 6);
 
   return (
     <>

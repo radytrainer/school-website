@@ -7,25 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatShortDate, getLocalizedText, truncate } from "@/lib/utils";
 import { Calendar, ArrowRight, Search } from "lucide-react";
-import { createServerClient } from "@/lib/supabase";
-import type { News, NewsCategory } from "@/types";
-import { mockNews, mockNewsCategories } from "@/lib/mock-data";
+import { getPublishedNews, getNewsCategories } from "@/lib/queries";
 
 async function getNewsData() {
-  const supabase = createServerClient();
-  const [{ data: news }, { data: categories }] = await Promise.all([
-    supabase
-      .from("news")
-      .select("*, category:news_categories(*)")
-      .eq("status", "published")
-      .order("publish_date", { ascending: false }),
-    supabase.from("news_categories").select("*").order("sort_order"),
+  const [news, categories] = await Promise.all([
+    getPublishedNews(),
+    getNewsCategories(),
   ]);
-
-  return {
-    news: news && news.length > 0 ? (news as News[]) : mockNews.filter((n) => n.status === "published"),
-    categories: categories && categories.length > 0 ? (categories as NewsCategory[]) : mockNewsCategories,
-  };
+  return { news, categories };
 }
 
 export async function generateMetadata(): Promise<Metadata> {

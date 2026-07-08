@@ -3,19 +3,7 @@ import { getLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { getLocalizedText, formatShortDate } from "@/lib/utils";
 import { Trophy, Star } from "lucide-react";
-import { createServerClient } from "@/lib/supabase";
-import type { Achievement } from "@/types";
-import { mockAchievements } from "@/lib/mock-data";
-
-async function getAchievements(): Promise<Achievement[]> {
-  const supabase = createServerClient();
-  const { data } = await supabase
-    .from("achievements")
-    .select("*")
-    .eq("status", "published")
-    .order("achievement_date", { ascending: false });
-  return data && data.length > 0 ? (data as Achievement[]) : mockAchievements.filter((a) => a.status === "published");
-}
+import { getPublishedAchievements } from "@/lib/queries";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("achievements");
@@ -39,7 +27,7 @@ export default async function AchievementsPage({ searchParams }: AchievementsPag
   const params = await searchParams;
   const selectedType = params.type ?? "";
 
-  let achievements = await getAchievements();
+  let achievements = await getPublishedAchievements();
   if (selectedType) {
     achievements = achievements.filter((a) => a.achievement_type === selectedType);
   }

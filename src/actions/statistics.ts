@@ -3,7 +3,7 @@
 import { createServerClient } from "@/lib/supabase";
 import { statisticsSchema, type StatisticsInput } from "@/lib/validations";
 import type { ActionResult } from "@/types";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function createStatistics(
   data: StatisticsInput
@@ -18,6 +18,7 @@ export async function createStatistics(
   if (error) return { success: false, error: error.message };
 
   revalidatePath("/[locale]/(public)", "page");
+  revalidateTag("statistics");
   return { success: true };
 }
 
@@ -38,6 +39,7 @@ export async function updateStatistics(
   if (error) return { success: false, error: error.message };
 
   revalidatePath("/[locale]/(public)", "page");
+  revalidateTag("statistics");
   return { success: true };
 }
 
@@ -52,6 +54,7 @@ export async function setCurrentStatistics(
   if (error) return { success: false, error: error.message };
 
   revalidatePath("/[locale]/(public)", "page");
+  revalidateTag("statistics");
   return { success: true };
 }
 
@@ -61,5 +64,6 @@ export async function deleteStatistics(id: string): Promise<ActionResult<void>> 
   if (error) return { success: false, error: error.message };
 
   revalidatePath("/[locale]/(public)", "page");
+  revalidateTag("statistics");
   return { success: true };
 }

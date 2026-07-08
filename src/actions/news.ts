@@ -3,7 +3,7 @@
 import { createServerClient } from "@/lib/supabase";
 import { newsSchema, type NewsInput } from "@/lib/validations";
 import type { ActionResult } from "@/types";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function createNews(data: NewsInput): Promise<ActionResult<void>> {
   const parsed = newsSchema.safeParse(data);
@@ -17,6 +17,7 @@ export async function createNews(data: NewsInput): Promise<ActionResult<void>> {
 
   revalidatePath("/[locale]/(public)/news", "page");
   revalidatePath("/[locale]/(public)", "page");
+  revalidateTag("news");
   return { success: true };
 }
 
@@ -38,6 +39,7 @@ export async function updateNews(
 
   revalidatePath("/[locale]/(public)/news", "page");
   revalidatePath("/[locale]/(public)", "page");
+  revalidateTag("news");
   return { success: true };
 }
 
@@ -48,5 +50,6 @@ export async function deleteNews(id: string): Promise<ActionResult<void>> {
 
   revalidatePath("/[locale]/(public)/news", "page");
   revalidatePath("/[locale]/(public)", "page");
+  revalidateTag("news");
   return { success: true };
 }

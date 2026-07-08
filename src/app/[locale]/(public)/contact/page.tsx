@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
-import { createServerClient } from "@/lib/supabase";
+import { getSiteSettings } from "@/lib/queries";
 import ContactPageClient from "@/components/public/ContactPageClient";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -9,11 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 async function getContactInfo(locale: string) {
-  const supabase = createServerClient();
-  const { data } = await supabase.from("settings").select("key, value");
-  const settings: Record<string, string> = {};
-  (data ?? []).forEach((s: { key: string; value: string }) => { settings[s.key] = s.value; });
-
+  const settings = await getSiteSettings();
   const km = locale === "km";
   return {
     address:

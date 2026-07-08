@@ -3,7 +3,7 @@
 import { createServerClient } from "@/lib/supabase";
 import { achievementSchema, type AchievementInput } from "@/lib/validations";
 import type { ActionResult } from "@/types";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function createAchievement(
   data: AchievementInput
@@ -18,6 +18,7 @@ export async function createAchievement(
   if (error) return { success: false, error: error.message };
 
   revalidatePath("/[locale]/(public)", "page");
+  revalidateTag("achievements");
   return { success: true };
 }
 
@@ -38,6 +39,7 @@ export async function updateAchievement(
   if (error) return { success: false, error: error.message };
 
   revalidatePath("/[locale]/(public)", "page");
+  revalidateTag("achievements");
   return { success: true };
 }
 
@@ -49,5 +51,6 @@ export async function deleteAchievement(
   if (error) return { success: false, error: error.message };
 
   revalidatePath("/[locale]/(public)", "page");
+  revalidateTag("achievements");
   return { success: true };
 }

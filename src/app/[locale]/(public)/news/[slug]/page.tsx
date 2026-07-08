@@ -1,27 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { cache } from "react";
 import { notFound } from "next/navigation";
 import { getLocale } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 import { formatDate, getLocalizedText, stripHtml, truncate } from "@/lib/utils";
 import { Calendar, Eye, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { createServerClient } from "@/lib/supabase";
-import type { News } from "@/types";
-import { mockNews } from "@/lib/mock-data";
+import { getPublishedNews } from "@/lib/queries";
 import ShareButton from "@/components/public/ShareButton";
-
-const getAllNews = cache(async (): Promise<News[]> => {
-  const supabase = createServerClient();
-  const { data } = await supabase
-    .from("news")
-    .select("*, category:news_categories(*)")
-    .eq("status", "published")
-    .order("publish_date", { ascending: false });
-  return data && data.length > 0 ? (data as News[]) : mockNews.filter((n) => n.status === "published");
-});
 
 interface NewsDetailPageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -29,7 +16,7 @@ interface NewsDetailPageProps {
 
 export async function generateMetadata({ params }: NewsDetailPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
-  const allNews = await getAllNews();
+  const allNews = await getPublishedNews();
   const item = allNews.find((n) => n.slug === slug);
   if (!item) return {};
   const title = locale === "km" ? (item.title_km ?? item.title_en) : (item.title_en ?? item.title_km);
@@ -49,7 +36,7 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
   const { slug } = await params;
   const locale = await getLocale();
 
-  const allNews = await getAllNews();
+  const allNews = await getPublishedNews();
   const news = allNews.find((n) => n.slug === slug && n.status === "published");
   if (!news) notFound();
 

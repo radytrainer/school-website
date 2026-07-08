@@ -2,7 +2,7 @@
 
 import { createServerClient } from "@/lib/supabase";
 import type { ActionResult } from "@/types";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function upsertSetting(
   key: string,
@@ -19,6 +19,7 @@ export async function upsertSetting(
   if (error) return { success: false, error: error.message };
 
   revalidatePath("/[locale]/(public)", "page");
+  revalidateTag("settings");
   return { success: true };
 }
 
@@ -42,6 +43,7 @@ export async function upsertSchoolInfo(
   if (error) return { success: false, error: error.message };
 
   revalidatePath("/[locale]/(public)/about", "page");
+  revalidateTag("school_info");
   return { success: true };
 }
 
@@ -67,5 +69,6 @@ export async function updateLeadership(
   if (error) return { success: false, error: error.message };
 
   revalidatePath("/[locale]/(public)/about", "page");
+  revalidateTag("leadership");
   return { success: true };
 }

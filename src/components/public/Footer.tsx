@@ -2,14 +2,10 @@ import Link from "next/link";
 import { getTranslations, getLocale } from "next-intl/server";
 import { School, Phone, Mail, MapPin, Facebook, Youtube } from "lucide-react";
 import type { Locale } from "@/i18n/config";
-import { createServerClient } from "@/lib/supabase";
+import { getSiteSettings } from "@/lib/queries";
 
 async function getFooterContactInfo(locale: string) {
-  const supabase = createServerClient();
-  const { data } = await supabase.from("settings").select("key, value");
-  const settings: Record<string, string> = {};
-  (data ?? []).forEach((s: { key: string; value: string }) => { settings[s.key] = s.value; });
-
+  const settings = await getSiteSettings();
   const km = locale === "km";
   return {
     address:
