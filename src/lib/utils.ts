@@ -8,6 +8,23 @@ export function cn(...inputs: ClassValue[]) {
 
 // ─── Date helpers ─────────────────────────────────────────────
 
+// Khmer numerals/month names are rendered manually rather than via
+// `toLocaleDateString("km-KH", …)` because Intl's km-KH support is
+// implementation-defined and varies between Node's ICU (server render)
+// and a visitor's browser (client hydration). That mismatch produces a
+// hydration error that forces React to discard and rebuild the tree,
+// which in production can leave the router unable to navigate afterward.
+const KHMER_DIGITS = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
+
+const KHMER_MONTHS = [
+  "មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា",
+  "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ",
+];
+
+function toKhmerNumeral(value: number | string): string {
+  return String(value).replace(/[0-9]/g, (d) => KHMER_DIGITS[Number(d)]);
+}
+
 export function formatDate(
   date: string | Date | null | undefined,
   locale: string = "en"
@@ -17,11 +34,7 @@ export function formatDate(
   if (isNaN(d.getTime())) return "";
 
   if (locale === "km") {
-    return d.toLocaleDateString("km-KH", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    return `${toKhmerNumeral(d.getDate())} ${KHMER_MONTHS[d.getMonth()]} ${toKhmerNumeral(d.getFullYear())}`;
   }
   return format(d, "MMMM d, yyyy");
 }
@@ -34,11 +47,7 @@ export function formatRelativeDate(date: string | Date): string {
 export function formatShortDate(date: string | Date, locale = "en"): string {
   const d = typeof date === "string" ? new Date(date) : date;
   if (locale === "km") {
-    return d.toLocaleDateString("km-KH", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
+    return `${toKhmerNumeral(d.getDate())} ${KHMER_MONTHS[d.getMonth()]} ${toKhmerNumeral(d.getFullYear())}`;
   }
   return format(d, "MMM d, yyyy");
 }
@@ -91,10 +100,8 @@ export function getFileIcon(fileType: string | null | undefined): string {
 // ─── Number helpers ───────────────────────────────────────────
 
 export function formatNumber(n: number, locale = "en"): string {
-  if (locale === "km") {
-    return n.toLocaleString("km-KH");
-  }
-  return n.toLocaleString("en-US");
+  const grouped = n.toLocaleString("en-US");
+  return locale === "km" ? toKhmerNumeral(grouped) : grouped;
 }
 
 export function formatPercent(value: number): string {
