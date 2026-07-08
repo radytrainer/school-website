@@ -35,6 +35,7 @@ export default function Navbar() {
   const navLinks: NavLink[] = [
     { key: "home", href: `/${locale}` },
     { key: "about", href: `/${locale}/about` },
+    { key: "governance", href: `/${locale}/governance` },
     { key: "news", href: `/${locale}/news` },
     { key: "achievements", href: `/${locale}/achievements` },
     { key: "contact", href: `/${locale}/contact` },

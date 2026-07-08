@@ -2,6 +2,7 @@
   "nav": {
     "home": "Home",
     "about": "About",
+    "governance": "Governance",
     "news": "News",
     "achievements": "Achievements",
     "contact": "Contact",
@@ -68,6 +69,9 @@
     "mission": "Mission",
     "values": "Core Values",
     "leadership": "Leadership"
+  },
+  "governance": {
+    "title": "School Governance"
   },
   "donate": {
     "title": "Support Our School",

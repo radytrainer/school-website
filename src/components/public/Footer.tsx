@@ -26,6 +26,7 @@ export default async function Footer() {
   const quickLinks = [
     { label: t("nav.home"), href: `/${locale}` },
     { label: t("nav.about"), href: `/${locale}/about` },
+    { label: t("nav.governance"), href: `/${locale}/governance` },
     { label: t("nav.news"), href: `/${locale}/news` },
     { label: t("nav.achievements"), href: `/${locale}/achievements` },
     { label: t("nav.contact"), href: `/${locale}/contact` },
