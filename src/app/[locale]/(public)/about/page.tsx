@@ -78,7 +78,7 @@ export default async function AboutPage() {
         }}
       >
         <div className="container mx-auto px-6 text-center max-w-3xl">
-          <p className="font-khmer-title text-2xl md:text-3xl mb-3" style={{ color: "#fdbc13" }}>
+          <p className="font-khmer text-2xl md:text-3xl mb-3" style={{ color: "#fdbc13" }}>
             អំពីសាលារបស់យើង
           </p>
           <h1 className={cn("text-4xl md:text-5xl font-bold text-white mb-5", km && "font-khmer")}>
@@ -190,7 +190,7 @@ export default async function AboutPage() {
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <p className="font-khmer-title text-3xl md:text-4xl mb-1" style={{ color: "#00376f" }}>
+              <p className="font-khmer text-3xl md:text-4xl mb-1" style={{ color: "#00376f" }}>
                 ប្រវត្តិ​សាលា
               </p>
               <h2 className="text-2xl font-bold mb-6" style={{ color: "#0d1c2f" }}>
@@ -249,7 +249,7 @@ export default async function AboutPage() {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="font-khmer-title text-3xl mb-2" style={{ color: "#0d1c2f" }}>
+            <h2 className="font-khmer text-3xl mb-2" style={{ color: "#0d1c2f" }}>
               ដំណាក់កាលសំខាន់ៗ
             </h2>
             <p className="text-xs tracking-[0.2em] uppercase font-medium" style={{ color: "#737781" }}>
@@ -457,7 +457,7 @@ export default async function AboutPage() {
 
           {/* Section header */}
           <div className="text-center mb-14">
-            <h2 className="font-khmer-title text-3xl mb-2" style={{ color: "#0d1c2f" }}>
+            <h2 className="font-khmer text-3xl mb-2" style={{ color: "#0d1c2f" }}>
               គ្រូបង្រៀន
             </h2>
             <p className="text-xs tracking-[0.2em] uppercase font-medium mb-3" style={{ color: "#737781" }}>

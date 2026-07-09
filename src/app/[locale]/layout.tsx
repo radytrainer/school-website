@@ -3,6 +3,7 @@ import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { locales, type Locale } from "@/i18n/config";
 import { AuthProvider } from "@/contexts/AuthContext";
+import LocaleHtmlSync from "@/components/LocaleHtmlSync";
 import { Toaster } from "sonner";
 import type { Metadata } from "next";
 
@@ -46,6 +47,7 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider messages={messages}>
       <AuthProvider>
+        <LocaleHtmlSync />
         {children}
         <Toaster
           position="top-right"

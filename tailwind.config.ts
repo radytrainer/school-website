@@ -87,7 +87,6 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-inter)", "sans-serif"],
         khmer: ["var(--font-battambang)", "Battambang", "sans-serif"],
-        "khmer-title": ["var(--font-khmer-moul)", "Moul", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

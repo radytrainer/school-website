@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Battambang, Moul } from "next/font/google";
+import { Inter, Battambang } from "next/font/google";
 import { getLocale } from "next-intl/server";
 import { generateSchoolJsonLd } from "@/lib/structured-data";
 import "./globals.css";
@@ -14,13 +14,6 @@ const battambang = Battambang({
   subsets: ["khmer"],
   weight: ["400", "700"],
   variable: "--font-battambang",
-  display: "swap",
-});
-
-const moul = Moul({
-  subsets: ["khmer"],
-  weight: "400",
-  variable: "--font-khmer-moul",
   display: "swap",
 });
 
@@ -52,7 +45,7 @@ export default async function RootLayout({
           suppressHydrationWarning
         />
       </head>
-      <body className={`${inter.variable} ${battambang.variable} ${moul.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${battambang.variable} font-sans antialiased`}>
         {children}
       </body>
     </html>

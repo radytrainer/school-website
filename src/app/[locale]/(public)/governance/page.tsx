@@ -147,7 +147,7 @@ export default async function GovernancePage() {
         }}
       >
         <div className="container mx-auto px-6 text-center max-w-3xl">
-          <p className="font-khmer-title text-2xl md:text-3xl mb-3" style={{ color: "#fdbc13" }}>
+          <p className="font-khmer text-2xl md:text-3xl mb-3" style={{ color: "#fdbc13" }}>
             អភិបាលកិច្ចសាលារៀន
           </p>
           <h1 className={cn("text-4xl md:text-5xl font-bold text-white mb-5", km && "font-khmer")}>
@@ -165,7 +165,7 @@ export default async function GovernancePage() {
       <section className="py-16">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12 max-w-2xl mx-auto">
-            <p className="font-khmer-title text-3xl mb-2" style={{ color: "#00376f" }}>
+            <p className="font-khmer text-3xl mb-2" style={{ color: "#00376f" }}>
               អភិបាលកិច្ចសាលារៀន
             </p>
             <h2 className={cn("text-2xl font-bold mb-3", km && "font-khmer")} style={{ color: "#0d1c2f" }}>
@@ -188,7 +188,7 @@ export default async function GovernancePage() {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12 max-w-2xl mx-auto">
-            <p className="font-khmer-title text-3xl mb-2" style={{ color: "#00376f" }}>
+            <p className="font-khmer text-3xl mb-2" style={{ color: "#00376f" }}>
               វប្បធម៌បង្រៀន និងរៀន
             </p>
             <h2 className={cn("text-2xl font-bold mb-3", km && "font-khmer")} style={{ color: "#0d1c2f" }}>

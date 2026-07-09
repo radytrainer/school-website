@@ -85,7 +85,7 @@ export default async function DonatePage() {
               <Heart className="w-8 h-8" style={{ color: "#fdbc13" }} />
             </div>
           </div>
-          <p className="font-khmer-title text-2xl md:text-3xl mb-3" style={{ color: "#fdbc13" }}>
+          <p className="font-khmer text-2xl md:text-3xl mb-3" style={{ color: "#fdbc13" }}>
             {km ? "ចូលរួមគាំទ្រ" : "ចូលរួមគាំទ្រ"}
           </p>
           <h1 className={cn("text-4xl md:text-5xl font-bold text-white mb-5", km && "font-khmer")}>

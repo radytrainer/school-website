@@ -422,7 +422,7 @@ export default function HeroSection({ slides }: HeroSectionProps) {
                 <motion.p
                   variants={contentVariants}
                   transition={{ delay: 0.06, duration: 0.4 }}
-                  className="font-khmer-title text-lg md:text-xl mb-2 leading-relaxed"
+                  className="font-khmer text-lg md:text-xl mb-2 leading-relaxed"
                   style={{ color: accent }}
                 >
                   {slide.title_km}

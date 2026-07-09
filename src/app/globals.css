@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Battambang:wght@400;700&family=Moul&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Battambang:wght@400;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -62,20 +62,10 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
-  /* Khmer locale: Battambang for body, Moul for headings */
+  /* Khmer locale: Battambang everywhere, including headings */
   :lang(km) {
     font-family: var(--font-battambang), "Battambang", sans-serif;
     line-height: 1.8;
-  }
-
-  :lang(km) h1,
-  :lang(km) h2,
-  :lang(km) h3,
-  :lang(km) h4,
-  :lang(km) h5,
-  :lang(km) h6 {
-    font-family: var(--font-khmer-moul), "Moul", sans-serif;
-    line-height: 2;
   }
 }
 
