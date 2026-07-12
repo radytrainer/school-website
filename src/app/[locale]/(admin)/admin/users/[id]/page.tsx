@@ -12,8 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { createUser, updateUser } from "@/actions/users";
-import { supabase } from "@/lib/supabase";
+import { createUser, updateUser, getAdminUserById } from "@/actions/users";
 
 interface UserFormData {
   full_name: string;
@@ -38,9 +37,9 @@ export default function UserFormPage({ params }: PageProps) {
 
   useEffect(() => {
     if (!isNew) {
-      supabase.from("users").select("*").eq("id", id).single().then(({ data }) => {
+      getAdminUserById(id).then((data) => {
         if (data) {
-          const u = data as UserFormData & { id: string };
+          const u = data as unknown as UserFormData & { id: string };
           setValue("full_name", u.full_name ?? "");
           setValue("email", u.email ?? "");
           setValue("role", u.role ?? "editor");
