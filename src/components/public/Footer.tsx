@@ -1,8 +1,10 @@
+import Image from "next/image";
 import Link from "next/link";
 import { getTranslations, getLocale } from "next-intl/server";
-import { School, Phone, Mail, MapPin, Facebook, Youtube } from "lucide-react";
+import { Phone, Mail, MapPin, Facebook } from "lucide-react";
 import type { Locale } from "@/i18n/config";
 import { getSiteSettings } from "@/lib/queries";
+import TiktokIcon from "@/components/icons/TiktokIcon";
 
 async function getFooterContactInfo(locale: string) {
   const settings = await getSiteSettings();
@@ -10,18 +12,18 @@ async function getFooterContactInfo(locale: string) {
   return {
     address:
       (km ? settings.school_address_km : settings.school_address_en) ??
-      (km ? "ភ្នំពេញ, កម្ពុជា" : "Phnom Penh, Cambodia"),
+      (km ? "ខេត្តបាត់ដំបង, កម្ពុជា" : "Battambang Province, Cambodia"),
     phone: settings.school_phone ?? "+855 23 000 000",
     email: settings.school_email ?? "info@school.edu.kh",
     facebook: settings.school_facebook ?? "#",
-    youtube: settings.school_youtube ?? "#",
+    tiktok: settings.school_tiktok ?? "#",
   };
 }
 
 export default async function Footer() {
   const t = await getTranslations();
   const locale = (await getLocale()) as Locale;
-  const { address, phone, email, facebook, youtube } = await getFooterContactInfo(locale);
+  const { address, phone, email, facebook, tiktok } = await getFooterContactInfo(locale);
 
   const quickLinks = [
     { label: t("nav.home"), href: `/${locale}` },
@@ -29,6 +31,7 @@ export default async function Footer() {
     { label: t("nav.governance"), href: `/${locale}/governance` },
     { label: t("nav.news"), href: `/${locale}/news` },
     { label: t("nav.achievements"), href: `/${locale}/achievements` },
+    { label: t("nav.operation"), href: `/${locale}/operation` },
     { label: t("nav.contact"), href: `/${locale}/contact` },
     { label: t("nav.donate"), href: `/${locale}/donate` },
   ];
@@ -45,8 +48,8 @@ export default async function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-full bg-school-gold-500 flex items-center justify-center shrink-0">
-                <School className="w-6 h-6 text-white" />
+              <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
+                <Image src="/images/logo/logo.png" alt="School logo" fill className="object-cover" sizes="48px" />
               </div>
               <div>
                 <h3 className="font-bold text-lg leading-tight">{schoolName}</h3>
@@ -79,11 +82,11 @@ export default async function Footer() {
                 <Facebook className="w-4 h-4" />
               </a>
               <a
-                href={youtube}
-                className="w-9 h-9 rounded-full bg-white/10 hover:bg-red-500 flex items-center justify-center transition-colors"
-                aria-label="YouTube"
+                href={tiktok}
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-black flex items-center justify-center transition-colors"
+                aria-label="TikTok"
               >
-                <Youtube className="w-4 h-4" />
+                <TiktokIcon className="w-4 h-4" />
               </a>
             </div>
           </div>
@@ -133,7 +136,10 @@ export default async function Footer() {
             © {new Date().getFullYear()} {schoolName}. {t("footer.rights")}.
           </p>
           <p>
-            {locale === "km" ? "រៀបចំដោយ" : "Built with"} ❤️
+            {locale === "km"
+              ? "បង្កើតដោយសិស្ស Passerelles Numériques Cambodia (PNC)"
+              : "Build by Passerelles Numériques Cambodia (PNC) Students"}{" "}
+            ❤️
           </p>
         </div>
       </div>
