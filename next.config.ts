@@ -5,6 +5,11 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   transpilePackages: ["recharts", "react-smooth"],
+  // firebase-admin pulls in jwks-rsa, which CommonJS-requires the ESM-only
+  // `jose` package. Bundling it through webpack breaks that require() at
+  // runtime (ERR_REQUIRE_ESM); keeping it external makes Node load it
+  // natively from node_modules instead.
+  serverExternalPackages: ["firebase-admin"],
   images: {
     remotePatterns: [
       {
