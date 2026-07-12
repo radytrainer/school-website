@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLocale } from "next-intl";
 import { ChevronLeft, ChevronRight, ArrowRight, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, resolveImageUrl } from "@/lib/utils";
 import type { HeroSlide } from "@/types";
 
 interface HeroSectionProps {
@@ -316,7 +316,7 @@ export default function HeroSection({ slides }: HeroSectionProps) {
         >
           {slide.image_url ? (
             <Image
-              src={slide.image_url}
+              src={resolveImageUrl(slide.image_url)}
               alt={slide.title_en}
               fill
               className="object-cover"
@@ -422,7 +422,7 @@ export default function HeroSection({ slides }: HeroSectionProps) {
                 <motion.p
                   variants={contentVariants}
                   transition={{ delay: 0.06, duration: 0.4 }}
-                  className="font-khmer text-lg md:text-xl mb-2 leading-relaxed"
+                  className="font-khmer text-4xl md:text-5xl lg:text-6xl font-bold mb-2 leading-tight"
                   style={{ color: accent }}
                 >
                   {slide.title_km}
@@ -432,7 +432,7 @@ export default function HeroSection({ slides }: HeroSectionProps) {
                 <motion.h1
                   variants={contentVariants}
                   transition={{ delay: 0.13, duration: 0.4 }}
-                  className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-5"
+                  className="text-lg md:text-xl font-bold text-white leading-relaxed mb-5"
                 >
                   {slide.title_en}
                 </motion.h1>
