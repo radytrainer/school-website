@@ -1,22 +1,30 @@
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
 
 export function generateSchoolJsonLd() {
+  const nameEn = process.env.NEXT_PUBLIC_SCHOOL_NAME_EN ?? "Kamrieng High School";
+  const nameKm = process.env.NEXT_PUBLIC_SCHOOL_NAME_KM ?? "វិទ្យាល័យកំរៀង";
+
   return {
     "@context": "https://schema.org",
     "@type": "HighSchool",
-    name: process.env.NEXT_PUBLIC_SCHOOL_NAME_EN,
-    alternateName: process.env.NEXT_PUBLIC_SCHOOL_NAME_KM,
+    name: nameEn,
+    alternateName: nameKm,
+    description: `${nameEn} (${nameKm}) is a public high school in Kamrieng district, Battambang province, Cambodia.`,
     url: BASE_URL,
+    logo: `${BASE_URL}/images/logo/logo.png`,
+    image: `${BASE_URL}/images/logo/logo.png`,
     address: {
       "@type": "PostalAddress",
+      streetAddress: "Ou Da Village, Ou Da Commune",
+      addressLocality: process.env.NEXT_PUBLIC_SCHOOL_DISTRICT ?? "Kamrieng",
+      addressRegion: process.env.NEXT_PUBLIC_SCHOOL_PROVINCE ?? "Battambang",
       addressCountry: "KH",
-      addressLocality: process.env.NEXT_PUBLIC_SCHOOL_PROVINCE ?? "Cambodia",
     },
     telephone: process.env.NEXT_PUBLIC_SCHOOL_PHONE,
     email: process.env.NEXT_PUBLIC_SCHOOL_EMAIL,
     sameAs: [
       process.env.NEXT_PUBLIC_SCHOOL_FACEBOOK,
-      process.env.NEXT_PUBLIC_SCHOOL_YOUTUBE,
+      process.env.NEXT_PUBLIC_SCHOOL_TIKTOK,
     ].filter(Boolean),
   };
 }

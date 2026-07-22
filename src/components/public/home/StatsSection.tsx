@@ -138,40 +138,62 @@ export default function StatsSection({ stats }: StatsSectionProps) {
           ))}
         </div>
 
-        {/* Gender breakdown bar */}
+        {/* Gender breakdown */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="mt-8 bg-white rounded-2xl p-6 shadow-md border border-gray-100"
         >
-          <p className="text-sm font-medium text-gray-600 mb-3">
+          <p className="text-sm font-medium text-gray-600 mb-4">
             {locale === "km" ? "សិស្សតាមភេទ" : "Students by Gender"}
           </p>
-          <div className="flex rounded-full overflow-hidden h-4">
-            <div
-              className="bg-blue-500 transition-all duration-1000"
-              style={{
-                width: `${((stats.male_students ?? 0) / (stats.total_students ?? 1)) * 100}%`,
-              }}
-            />
-            <div
-              className="bg-pink-400 transition-all duration-1000"
-              style={{
-                width: `${((stats.female_students ?? 0) / (stats.total_students ?? 1)) * 100}%`,
-              }}
-            />
-          </div>
-          <div className="flex justify-between mt-2 text-xs text-gray-500">
-            <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-blue-500 inline-block" />
-              {locale === "km" ? "ប្រុស" : "Male"} ({formatNumber(stats.male_students ?? 0, locale)})
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-pink-400 inline-block" />
-              {locale === "km" ? "ស្រី" : "Female"} ({formatNumber(stats.female_students ?? 0, locale)})
-            </span>
-          </div>
+
+          {(() => {
+            const total = stats.total_students || 1;
+            const male = stats.male_students ?? 0;
+            const female = stats.female_students ?? 0;
+            const malePct = ((male / total) * 100).toFixed(1);
+            const femalePct = ((female / total) * 100).toFixed(1);
+
+            return (
+              <>
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-5">
+                  <div className="flex items-center gap-3 p-4 rounded-xl bg-blue-50">
+                    <div className="w-11 h-11 rounded-full bg-blue-500 flex items-center justify-center text-white text-xl font-bold shrink-0">
+                      ♂
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-2xl font-bold text-gray-900 tabular-nums leading-tight">
+                        {formatNumber(male, locale)}
+                      </p>
+                      <p className="text-xs text-gray-500 truncate">
+                        {locale === "km" ? "ប្រុស" : "Male"} · {malePct}%
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-4 rounded-xl bg-pink-50">
+                    <div className="w-11 h-11 rounded-full bg-pink-400 flex items-center justify-center text-white text-xl font-bold shrink-0">
+                      ♀
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-2xl font-bold text-gray-900 tabular-nums leading-tight">
+                        {formatNumber(female, locale)}
+                      </p>
+                      <p className="text-xs text-gray-500 truncate">
+                        {locale === "km" ? "ស្រី" : "Female"} · {femalePct}%
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex rounded-full overflow-hidden h-2.5">
+                  <div className="bg-blue-500 transition-all duration-1000" style={{ width: `${malePct}%` }} />
+                  <div className="bg-pink-400 transition-all duration-1000" style={{ width: `${femalePct}%` }} />
+                </div>
+              </>
+            );
+          })()}
         </motion.div>
       </div>
     </section>

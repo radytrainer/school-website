@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
 
     const supabase = createServerClient();
     const { data, error } = await supabase
-      .from("users")
+      .from("admin_users")
       .select("*")
       .eq("firebase_uid", firebase_uid)
       .single();

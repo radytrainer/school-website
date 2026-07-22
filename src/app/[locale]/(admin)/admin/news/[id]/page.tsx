@@ -5,8 +5,9 @@ import { useLocale as useNextLocale } from "next-intl";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import { ArrowLeft, Save, Loader2, Plus, X, ImageOff } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,8 +15,9 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/lib/supabase";
 import { newsSchema, type NewsInput } from "@/lib/validations";
-import { slugify } from "@/lib/utils";
-import { createNews, updateNews } from "@/actions/news";
+import { slugify, resolveImageUrl } from "@/lib/utils";
+import { createNews, updateNews, getAdminNewsById } from "@/actions/news";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 import type { NewsCategory } from "@/types";
 import { useRouter as useNextRouter } from "next/navigation";
 
@@ -43,6 +45,7 @@ export default function NewsFormPage({ params }: PageProps) {
     defaultValues: {
       status: "draft",
       is_featured: false,
+      images: [],
     },
   });
 
@@ -64,11 +67,7 @@ export default function NewsFormPage({ params }: PageProps) {
       setCategories((cats ?? []) as NewsCategory[]);
 
       if (!isNew) {
-        const { data } = await supabase
-          .from("news")
-          .select("*")
-          .eq("id", id)
-          .single();
+        const data = await getAdminNewsById(id);
         if (data) {
           Object.entries(data).forEach(([k, v]) => {
             if (v !== null) setValue(k as keyof NewsInput, v as string);
@@ -169,23 +168,34 @@ export default function NewsFormPage({ params }: PageProps) {
               </div>
 
               {/* Content */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div className="space-y-1.5">
                   <Label>មាតិកា (ខ្មែរ)</Label>
-                  <textarea
-                    {...register("content_km")}
-                    rows={10}
-                    className="font-khmer w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    placeholder="មាតិកា HTML..."
+                  <Controller
+                    name="content_km"
+                    control={control}
+                    render={({ field }) => (
+                      <RichTextEditor
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                        khmer
+                        placeholder="សរសេរមាតិកានៅទីនេះ..."
+                      />
+                    )}
                   />
                 </div>
                 <div className="space-y-1.5">
                   <Label>Content (English)</Label>
-                  <textarea
-                    {...register("content_en")}
-                    rows={10}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    placeholder="HTML content..."
+                  <Controller
+                    name="content_en"
+                    control={control}
+                    render={({ field }) => (
+                      <RichTextEditor
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                        placeholder="Write the article content here..."
+                      />
+                    )}
                   />
                 </div>
               </div>
@@ -242,12 +252,15 @@ export default function NewsFormPage({ params }: PageProps) {
                 name="category_id"
                 control={control}
                 render={({ field }) => (
-                  <Select value={field.value ?? ""} onValueChange={field.onChange}>
+                  <Select
+                    value={field.value || "none"}
+                    onValueChange={(v) => field.onChange(v === "none" ? "" : v)}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No category</SelectItem>
+                      <SelectItem value="none">No category</SelectItem>
                       {categories.map((cat) => (
                         <SelectItem key={cat.id} value={cat.id}>
                           {locale === "km" ? cat.name_km : cat.name_en}
@@ -264,7 +277,65 @@ export default function NewsFormPage({ params }: PageProps) {
               <h2 className="font-semibold text-gray-900">Featured Image</h2>
               <Input
                 {...register("featured_image")}
-                placeholder="https://... or upload URL"
+                placeholder="https://... or Google Drive link"
+              />
+            </div>
+
+            {/* Photo gallery */}
+            <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-3">
+              <h2 className="font-semibold text-gray-900">Photo Gallery</h2>
+              <p className="text-xs text-gray-400">
+                Extra photos shown in a gallery on the article page. Google Drive share links work too.
+              </p>
+              <Controller
+                name="images"
+                control={control}
+                render={({ field }) => {
+                  const images: string[] = field.value ?? [];
+                  return (
+                    <div className="space-y-2">
+                      {images.map((url, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <div className="relative w-11 h-9 rounded-md overflow-hidden bg-gray-100 shrink-0 border border-gray-200 flex items-center justify-center">
+                            {url ? (
+                              <Image src={resolveImageUrl(url)} alt="" fill className="object-cover" />
+                            ) : (
+                              <ImageOff className="w-3.5 h-3.5 text-gray-300" />
+                            )}
+                          </div>
+                          <Input
+                            value={url}
+                            onChange={(e) => {
+                              const next = [...images];
+                              next[i] = e.target.value;
+                              field.onChange(next);
+                            }}
+                            placeholder="https://... or Google Drive link"
+                            className="flex-1"
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-9 w-9 shrink-0"
+                            onClick={() => field.onChange(images.filter((_, idx) => idx !== i))}
+                          >
+                            <X className="w-4 h-4 text-red-500" />
+                          </Button>
+                        </div>
+                      ))}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => field.onChange([...images, ""])}
+                      >
+                        <Plus className="w-3.5 h-3.5 mr-1" />
+                        Add Photo
+                      </Button>
+                    </div>
+                  );
+                }}
               />
             </div>
 

@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, School, Globe, Heart } from "lucide-react";
+import { Menu, X, Globe, Heart, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { locales, localeNames, localeFlags, type Locale } from "@/i18n/config";
@@ -19,6 +20,7 @@ export default function Navbar() {
   const t = useTranslations("nav");
   const locale = useLocale() as Locale;
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -38,13 +40,17 @@ export default function Navbar() {
     { key: "governance", href: `/${locale}/governance` },
     { key: "news", href: `/${locale}/news` },
     { key: "achievements", href: `/${locale}/achievements` },
+    { key: "documents", href: `/${locale}/documents` },
+    { key: "operation", href: `/${locale}/operation` },
     { key: "contact", href: `/${locale}/contact` },
   ];
 
   const switchLocale = (newLocale: Locale) => {
     const segments = pathname.split("/");
     segments[1] = newLocale;
-    router.push(segments.join("/"));
+    const query = searchParams.toString();
+    const hash = typeof window !== "undefined" ? window.location.hash : "";
+    router.push(segments.join("/") + (query ? `?${query}` : "") + hash);
   };
 
   const isActive = (href: string) => {
@@ -65,8 +71,8 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href={`/${locale}`} className="flex items-center gap-2 shrink-0">
-            <div className="w-10 h-10 rounded-full bg-school-blue-800 flex items-center justify-center">
-              <School className="w-5 h-5 text-school-gold-400" />
+            <div className="relative w-10 h-10 rounded-full overflow-hidden shrink-0">
+              <Image src="/images/logo/logo.png" alt="School logo" fill className="object-cover" sizes="40px" />
             </div>
             <div className="hidden sm:block">
               <p className={cn("text-sm font-bold leading-tight", isTransparent ? "text-white" : "text-school-blue-800")}>
@@ -134,6 +140,21 @@ export default function Navbar() {
                 </button>
               ))}
             </div>
+
+            {/* Admin sign-in */}
+            <Link
+              href={`/${locale}/admin`}
+              aria-label={t("admin")}
+              title={t("admin")}
+              className={cn(
+                "hidden lg:inline-flex items-center justify-center w-9 h-9 rounded-full transition-colors",
+                isTransparent
+                  ? "text-white/80 hover:text-white hover:bg-white/10"
+                  : "text-gray-600 hover:text-school-blue-800 hover:bg-gray-100"
+              )}
+            >
+              <LogIn className="w-[18px] h-[18px]" />
+            </Link>
 
             {/* Mobile menu toggle */}
             <button

@@ -5,19 +5,20 @@ import { useLocale } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Save, Loader2 } from "lucide-react";
+import { Save, Loader2, KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
-import { updateUserSchema } from "@/lib/validations";
+import { updateUserSchema, changePasswordSchema } from "@/lib/validations";
 import { updateUser } from "@/actions/users";
 import { getInitials } from "@/lib/utils";
 import type { z } from "zod";
 
 type UpdateInput = z.infer<typeof updateUserSchema>;
+type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 
 const ROLE_LABELS: Record<string, string> = {
   administrator: "Administrator",
@@ -27,8 +28,9 @@ const ROLE_LABELS: Record<string, string> = {
 
 export default function AdminProfilePage() {
   const locale = useLocale();
-  const { user } = useAuth();
+  const { user, changePassword } = useAuth();
   const [saving, setSaving] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<UpdateInput>({
     resolver: zodResolver(updateUserSchema),
@@ -40,6 +42,15 @@ export default function AdminProfilePage() {
     },
   });
 
+  const {
+    register: registerPassword,
+    handleSubmit: handlePasswordSubmit,
+    reset: resetPasswordForm,
+    formState: { errors: passwordErrors },
+  } = useForm<ChangePasswordInput>({
+    resolver: zodResolver(changePasswordSchema),
+  });
+
   const onSubmit = async (data: UpdateInput) => {
     if (!user?.id) return;
     setSaving(true);
@@ -47,6 +58,24 @@ export default function AdminProfilePage() {
     setSaving(false);
     if (result.success) toast.success("Profile updated!");
     else toast.error(result.error ?? "Failed to update profile");
+  };
+
+  const onChangePassword = async (data: ChangePasswordInput) => {
+    setChangingPassword(true);
+    try {
+      await changePassword(data.newPassword);
+      toast.success("Password updated!");
+      resetPasswordForm();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to update password";
+      if (msg.includes("requires-recent-login")) {
+        toast.error("Please sign out and sign back in, then try again.");
+      } else {
+        toast.error(msg);
+      }
+    } finally {
+      setChangingPassword(false);
+    }
   };
 
   if (!user) return null;
@@ -103,6 +132,36 @@ export default function AdminProfilePage() {
         <Button type="submit" className="bg-school-blue-800 hover:bg-school-blue-900" disabled={saving}>
           {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
           {locale === "km" ? "រក្សាទុក" : "Save Changes"}
+        </Button>
+      </form>
+
+      {/* Change password */}
+      <form onSubmit={handlePasswordSubmit(onChangePassword)} className="space-y-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+          <h2 className="font-semibold text-gray-900">
+            {locale === "km" ? "ប្តូរពាក្យសម្ងាត់" : "Change Password"}
+          </h2>
+
+          <div className="space-y-1.5">
+            <Label>New Password *</Label>
+            <Input {...registerPassword("newPassword")} type="password" placeholder="••••••••" autoComplete="new-password" />
+            {passwordErrors.newPassword && (
+              <p className="text-xs text-red-500">{passwordErrors.newPassword.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Confirm New Password *</Label>
+            <Input {...registerPassword("confirmPassword")} type="password" placeholder="••••••••" autoComplete="new-password" />
+            {passwordErrors.confirmPassword && (
+              <p className="text-xs text-red-500">{passwordErrors.confirmPassword.message}</p>
+            )}
+          </div>
+        </div>
+
+        <Button type="submit" className="bg-school-blue-800 hover:bg-school-blue-900" disabled={changingPassword}>
+          {changingPassword ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <KeyRound className="w-4 h-4 mr-2" />}
+          {locale === "km" ? "ប្តូរពាក្យសម្ងាត់" : "Update Password"}
         </Button>
       </form>
     </div>

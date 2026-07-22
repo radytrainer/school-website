@@ -1,3 +1,5 @@
+import type { ReportSubsection } from "@/lib/school-report-data";
+
 // ─────────────────────────────────────────────────────────────
 // Enums
 // ─────────────────────────────────────────────────────────────
@@ -8,6 +10,8 @@ export type AchievementType = "student" | "teacher" | "school";
 export type AwardLevel = "national" | "provincial" | "district" | "school";
 export type MessageStatus = "unread" | "read" | "replied" | "archived";
 export type MediaType = "image" | "video" | "document";
+export type GovernanceSection = "structure" | "culture";
+export type DocumentCategory = "report" | "result" | "form" | "policy" | "other";
 export type AuditAction =
   | "create"
   | "update"
@@ -73,6 +77,7 @@ export interface News {
   excerpt_km?: string;
   excerpt_en?: string;
   featured_image?: string;
+  images?: string[];
   category_id?: string;
   is_featured: boolean;
   status: ContentStatus;
@@ -147,8 +152,34 @@ export interface Leadership {
   bio_km?: string;
   bio_en?: string;
   photo_url?: string;
+  gender?: "male" | "female";
+  phone?: string;
+  date_of_birth?: string;
+  qualification_km?: string;
+  qualification_en?: string;
+  specialization_km?: string;
+  specialization_en?: string;
+  subject_km?: string;
+  subject_en?: string;
+  grade_levels?: number[];
   sort_order: number;
   is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Milestone {
+  id: string;
+  year: string;
+  title_km: string;
+  title_en: string;
+  description_km?: string;
+  description_en?: string;
+  color: string;
+  sort_order: number;
+  is_active: boolean;
+  created_by?: string;
+  updated_by?: string;
   created_at: string;
   updated_at: string;
 }
@@ -176,9 +207,93 @@ export interface Teacher {
   qualification_km?: string;
   qualification_en?: string;
   photo_url?: string;
+  gender?: "male" | "female";
+  phone?: string;
+  date_of_birth?: string;
+  position_km?: string;
+  position_en?: string;
+  specialization_km?: string;
+  specialization_en?: string;
   years_experience?: number;
+  grade_levels?: number[];
   is_active: boolean;
   sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BankAccount {
+  id: string;
+  bank_name_km: string;
+  bank_name_en: string;
+  account_name_km: string;
+  account_name_en: string;
+  account_number: string;
+  currency: string;
+  logo_color: string;
+  sort_order: number;
+  is_active: boolean;
+  created_by?: string;
+  updated_by?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DonationUse {
+  id: string;
+  icon: string;
+  title_km: string;
+  title_en: string;
+  description_km?: string;
+  description_en?: string;
+  sort_order: number;
+  is_active: boolean;
+  created_by?: string;
+  updated_by?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ReportSectionRecord {
+  id: string;
+  number: number;
+  title_km: string;
+  title_en: string;
+  subsections: ReportSubsection[];
+  is_active: boolean;
+  created_by?: string;
+  updated_by?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface GovernanceItem {
+  id: string;
+  section: GovernanceSection;
+  title_km: string;
+  title_en: string;
+  icon: string;
+  is_active: boolean;
+  sort_order: number;
+  created_by?: string;
+  updated_by?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Document {
+  id: string;
+  title_km: string;
+  title_en: string;
+  description_km?: string;
+  description_en?: string;
+  category: DocumentCategory;
+  file_url: string;
+  file_name: string;
+  sort_order: number;
+  is_active: boolean;
+  created_by?: string;
+  updated_by?: string;
   created_at: string;
   updated_at: string;
 }
@@ -255,6 +370,9 @@ export interface RolePermissions {
   canManageAchievements: boolean;
   canManageNews: boolean;
   canManageMessages: boolean;
+  canManageGovernance: boolean;
+  canManageDocuments: boolean;
+  canManageHeroSlides: boolean;
 }
 
 export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
@@ -268,6 +386,9 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canManageAchievements: true,
     canManageNews: true,
     canManageMessages: true,
+    canManageGovernance: true,
+    canManageDocuments: true,
+    canManageHeroSlides: true,
   },
   director: {
     canManageUsers: false,
@@ -279,6 +400,9 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canManageAchievements: true,
     canManageNews: true,
     canManageMessages: true,
+    canManageGovernance: true,
+    canManageDocuments: true,
+    canManageHeroSlides: true,
   },
   editor: {
     canManageUsers: false,
@@ -290,5 +414,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, RolePermissions> = {
     canManageAchievements: false,
     canManageNews: true,
     canManageMessages: false,
+    canManageGovernance: false,
+    canManageDocuments: false,
+    canManageHeroSlides: false,
   },
 };

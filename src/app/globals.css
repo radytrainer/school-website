@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Battambang:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Battambang:wght@400;700&family=Moul&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -66,6 +66,14 @@
   :lang(km) {
     font-family: var(--font-battambang), "Battambang", sans-serif;
     line-height: 1.8;
+  }
+
+  /* Battambang reads smaller than Latin text at the same pixel size, so
+     nudge the root font-size up on Khmer pages. This scales every
+     rem-based Tailwind text-size utility site-wide without compounding,
+     since rem always resolves against this single root value. */
+  html:lang(km) {
+    font-size: 108%;
   }
 }
 

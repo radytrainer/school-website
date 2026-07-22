@@ -1,22 +1,24 @@
 import { createServerClient } from "@/lib/supabase";
 import { getLocale } from "next-intl/server";
 import {
-  Newspaper, MessageSquare,
+  Newspaper, MessageSquare, Eye,
   TrendingUp, TrendingDown, ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
 import { formatRelativeDate } from "@/lib/utils";
 import type { Message, AuditLog } from "@/types";
 import VisitorChartWrapper from "@/components/admin/VisitorChartWrapper";
+import { getVisitorStats } from "@/lib/analytics";
 
 async function getDashboardData() {
   const supabase = createServerClient();
-  const [newsCount, unreadMessages, recentMessages, auditLogs] =
+  const [newsCount, unreadMessages, recentMessages, auditLogs, visitorStats] =
     await Promise.all([
       supabase.from("news").select("*", { count: "exact", head: true }),
       supabase.from("messages").select("*", { count: "exact", head: true }).eq("status", "unread"),
       supabase.from("messages").select("*").order("created_at", { ascending: false }).limit(6),
-      supabase.from("audit_logs").select("*").order("created_at", { ascending: false }).limit(8),
+      supabase.from("admin_audit_logs").select("*").order("created_at", { ascending: false }).limit(8),
+      getVisitorStats(),
     ]);
 
   return {
@@ -24,6 +26,7 @@ async function getDashboardData() {
     unreadMessages: unreadMessages.count ?? 0,
     recentMessages: (recentMessages.data ?? []) as Message[],
     auditLogs: (auditLogs.data ?? []) as AuditLog[],
+    visitorStats,
   };
 }
 
@@ -65,6 +68,15 @@ export default async function AdminDashboardPage() {
       iconBg: "#fef2f2",
       iconColor: "#dc2626",
     },
+    {
+      label: locale === "km" ? "អ្នកចូលមើល (៧ថ្ងៃ)" : "Total Visitors (7d)",
+      value: data.visitorStats.reduce((sum, d) => sum + d.visitors, 0),
+      icon: Eye,
+      caption: locale === "km" ? "សប្ដាហ៍ចុងក្រោយ" : "Last 7 days",
+      href: `/${locale}/admin`,
+      iconBg: "#eff6ff",
+      iconColor: "#00376f",
+    },
   ];
 
   return (
@@ -91,7 +103,7 @@ export default async function AdminDashboardPage() {
 
         {/* Stat cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {STAT_CARDS.map(({ label, value, icon: Icon, trend, href, iconBg, iconColor }) => (
+          {STAT_CARDS.map(({ label, value, icon: Icon, trend, caption, href, iconBg, iconColor }) => (
             <Link
               key={label}
               href={href}
@@ -105,19 +117,23 @@ export default async function AdminDashboardPage() {
                 <div>
                   <p className="text-xs font-medium mb-2" style={{ color: "#8892a0" }}>{label}</p>
                   <p className="text-3xl font-bold tabular-nums" style={{ color: "#0d1c2f" }}>{value}</p>
-                  <div className="flex items-center gap-1 mt-2">
-                    {trend >= 0 ? (
-                      <TrendingUp className="w-3.5 h-3.5" style={{ color: "#16a34a" }} />
-                    ) : (
-                      <TrendingDown className="w-3.5 h-3.5" style={{ color: "#dc2626" }} />
-                    )}
-                    <span
-                      className="text-xs font-medium"
-                      style={{ color: trend >= 0 ? "#16a34a" : "#dc2626" }}
-                    >
-                      {trend >= 0 ? `+${trend}` : trend} {locale === "km" ? "ថ្មី" : "new"}
-                    </span>
-                  </div>
+                  {caption ? (
+                    <p className="text-xs font-medium mt-2" style={{ color: "#8892a0" }}>{caption}</p>
+                  ) : (
+                    <div className="flex items-center gap-1 mt-2">
+                      {(trend ?? 0) >= 0 ? (
+                        <TrendingUp className="w-3.5 h-3.5" style={{ color: "#16a34a" }} />
+                      ) : (
+                        <TrendingDown className="w-3.5 h-3.5" style={{ color: "#dc2626" }} />
+                      )}
+                      <span
+                        className="text-xs font-medium"
+                        style={{ color: (trend ?? 0) >= 0 ? "#16a34a" : "#dc2626" }}
+                      >
+                        {(trend ?? 0) >= 0 ? `+${trend}` : trend} {locale === "km" ? "ថ្មី" : "new"}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div
                   className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
@@ -157,7 +173,7 @@ export default async function AdminDashboardPage() {
                 </span>
               </div>
             </div>
-            <VisitorChartWrapper />
+            <VisitorChartWrapper data={data.visitorStats} />
           </div>
 
           {/* Recent Activity */}
@@ -250,12 +266,10 @@ export default async function AdminDashboardPage() {
                   {data.recentMessages.map((msg, i) => (
                     <tr
                       key={msg.id}
-                      className="transition-colors"
+                      className="transition-colors hover:bg-[#f8faff]"
                       style={{
                         borderBottom: i < data.recentMessages.length - 1 ? "1px solid #eaeff6" : undefined,
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = "#f8faff")}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = "")}
                     >
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-2.5">

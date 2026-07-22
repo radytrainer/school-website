@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -8,8 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Newspaper, Trophy,
   MessageSquare, Users, Settings, BarChart3,
-  School, ChevronLeft, ChevronRight, LogOut, X, Plus,
-  GraduationCap,
+  ChevronLeft, ChevronRight, LogOut, X, Plus,
+  GraduationCap, Landmark, Phone, Info, Heart, FileBarChart, FileText, Images,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
@@ -29,25 +29,37 @@ interface NavGroup {
 
 const NAV_GROUPS: NavGroup[] = [
   { label: "Overview", keys: ["dashboard", "statistics"] },
-  { label: "Content", keys: ["news", "achievements", "teachers"] },
+  { label: "Content", keys: ["hero_slides", "news", "achievements", "documents", "teachers", "governance", "about_page", "contact_page", "donate_page", "report_page"] },
   { label: "Inbox", keys: ["messages"] },
   { label: "System", keys: ["users", "settings"] },
 ];
 
-export default function AdminSidebar() {
+interface AdminSidebarProps {
+  collapsed: boolean;
+  onCollapsedChange: (collapsed: boolean) => void;
+  mobileOpen: boolean;
+  onMobileOpenChange: (open: boolean) => void;
+}
+
+export default function AdminSidebar({ collapsed, onCollapsedChange, mobileOpen, onMobileOpenChange }: AdminSidebarProps) {
   const t = useTranslations("admin");
   const locale = useLocale() as Locale;
   const pathname = usePathname();
   const { user, logout, hasPermission } = useAuth();
-  const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   const allNavItems: NavItem[] = [
     { key: "dashboard", href: `/${locale}/admin`, icon: <LayoutDashboard className="w-4.5 h-4.5" /> },
     { key: "statistics", href: `/${locale}/admin/statistics`, icon: <BarChart3 className="w-4.5 h-4.5" /> },
+    { key: "hero_slides", href: `/${locale}/admin/hero-slides`, icon: <Images className="w-4.5 h-4.5" />, permission: "canManageHeroSlides" },
     { key: "news", href: `/${locale}/admin/news`, icon: <Newspaper className="w-4.5 h-4.5" /> },
     { key: "achievements", href: `/${locale}/admin/achievements`, icon: <Trophy className="w-4.5 h-4.5" /> },
+    { key: "documents", href: `/${locale}/admin/documents`, icon: <FileText className="w-4.5 h-4.5" />, permission: "canManageDocuments" },
     { key: "teachers", href: `/${locale}/admin/teachers`, icon: <GraduationCap className="w-4.5 h-4.5" /> },
+    { key: "governance", href: `/${locale}/admin/governance`, icon: <Landmark className="w-4.5 h-4.5" />, permission: "canManageGovernance" },
+    { key: "about_page", href: `/${locale}/admin/about`, icon: <Info className="w-4.5 h-4.5" />, permission: "canManageSettings" },
+    { key: "contact_page", href: `/${locale}/admin/contact`, icon: <Phone className="w-4.5 h-4.5" />, permission: "canManageSettings" },
+    { key: "donate_page", href: `/${locale}/admin/donate`, icon: <Heart className="w-4.5 h-4.5" />, permission: "canManageSettings" },
+    { key: "report_page", href: `/${locale}/admin/report`, icon: <FileBarChart className="w-4.5 h-4.5" />, permission: "canManageSettings" },
     { key: "messages", href: `/${locale}/admin/messages`, icon: <MessageSquare className="w-4.5 h-4.5" /> },
     { key: "users", href: `/${locale}/admin/users`, icon: <Users className="w-4.5 h-4.5" />, permission: "canManageUsers" },
     { key: "settings", href: `/${locale}/admin/settings`, icon: <Settings className="w-4.5 h-4.5" />, permission: "canManageSettings" },
@@ -72,11 +84,8 @@ export default function AdminSidebar() {
         )}
         style={{ borderColor: "rgba(255,255,255,0.08)" }}
       >
-        <div
-          className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-          style={{ background: "#fdbc13" }}
-        >
-          <School className="w-5 h-5 text-white" />
+        <div className="relative w-9 h-9 rounded-xl overflow-hidden shrink-0">
+          <Image src="/images/logo/logo.png" alt="School logo" fill className="object-cover" sizes="36px" />
         </div>
         {!collapsed && (
           <div className="min-w-0">
@@ -136,7 +145,7 @@ export default function AdminSidebar() {
                     <Link
                       key={item.key}
                       href={item.href}
-                      onClick={() => setMobileOpen(false)}
+                      onClick={() => onMobileOpenChange(false)}
                       title={collapsed ? t(item.key as Parameters<typeof t>[0]) : undefined}
                       className={cn(
                         "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150",
@@ -211,7 +220,7 @@ export default function AdminSidebar() {
       <button
         className="hidden lg:flex absolute -right-3.5 top-20 w-7 h-7 rounded-full items-center justify-center text-white border transition-all duration-150"
         style={{ background: "#0d1b38", borderColor: "rgba(255,255,255,0.12)" }}
-        onClick={() => setCollapsed((c) => !c)}
+        onClick={() => onCollapsedChange(!collapsed)}
       >
         {collapsed
           ? <ChevronRight className="w-3.5 h-3.5" />
@@ -242,7 +251,7 @@ export default function AdminSidebar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="lg:hidden fixed inset-0 bg-black/50 z-40"
-              onClick={() => setMobileOpen(false)}
+              onClick={() => onMobileOpenChange(false)}
             />
             <motion.aside
               initial={{ x: -256 }}
@@ -255,7 +264,7 @@ export default function AdminSidebar() {
               <button
                 className="absolute top-4 right-4 hover:text-white transition-colors"
                 style={{ color: "rgba(255,255,255,0.5)" }}
-                onClick={() => setMobileOpen(false)}
+                onClick={() => onMobileOpenChange(false)}
               >
                 <X className="w-5 h-5" />
               </button>

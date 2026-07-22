@@ -8,11 +8,10 @@ import { Plus, Search, Eye, Edit, Trash2, Star, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/lib/supabase";
 import type { News } from "@/types";
-import { formatShortDate, getLocalizedText } from "@/lib/utils";
+import { formatShortDate, getLocalizedText, resolveImageUrl } from "@/lib/utils";
 import { toast } from "sonner";
-import { deleteNews } from "@/actions/news";
+import { deleteNews, getAdminNewsList } from "@/actions/news";
 
 const STATUS_COLORS: Record<string, "default" | "success" | "warning" | "destructive"> = {
   published: "success",
@@ -29,15 +28,9 @@ export default function AdminNewsPage() {
 
   const fetchNews = useCallback(async () => {
     setLoading(true);
-    let query = supabase
-      .from("news")
-      .select("*, category:news_categories(*)")
-      .order("created_at", { ascending: false });
+    let items = await getAdminNewsList();
 
-    if (statusFilter !== "all") query = query.eq("status", statusFilter);
-
-    const { data } = await query;
-    let items = (data ?? []) as News[];
+    if (statusFilter !== "all") items = items.filter((n) => n.status === statusFilter);
 
     if (search) {
       const q = search.toLowerCase();
@@ -158,7 +151,7 @@ export default function AdminNewsPage() {
                           {item.featured_image && (
                             <div className="w-10 h-8 rounded overflow-hidden shrink-0">
                               <Image
-                                src={item.featured_image}
+                                src={resolveImageUrl(item.featured_image)}
                                 alt={title}
                                 width={40}
                                 height={32}

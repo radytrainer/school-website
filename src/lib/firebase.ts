@@ -6,6 +6,11 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence,
+  sendPasswordResetEmail,
+  updatePassword,
   type User as FirebaseUser,
 } from "firebase/auth";
 
@@ -34,5 +39,10 @@ export {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence,
+  sendPasswordResetEmail,
+  updatePassword,
   type FirebaseUser,
 };

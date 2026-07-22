@@ -14,8 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { achievementSchema, type AchievementInput } from "@/lib/validations";
-import { createAchievement, updateAchievement } from "@/actions/achievements";
-import { supabase } from "@/lib/supabase";
+import { createAchievement, updateAchievement, getAdminAchievementById } from "@/actions/achievements";
 
 interface PageProps { params: Promise<{ id: string }>; }
 
@@ -31,7 +30,7 @@ export default function AchievementFormPage({ params }: PageProps) {
 
   useEffect(() => {
     if (!isNew) {
-      supabase.from("achievements").select("*").eq("id", id).single().then(({ data }) => {
+      getAdminAchievementById(id).then((data) => {
         if (data) Object.entries(data).forEach(([k, v]) => { if (v !== null) setValue(k as keyof AchievementInput, v as string); });
         setLoading(false);
       });
@@ -134,11 +133,9 @@ export default function AchievementFormPage({ params }: PageProps) {
                   <Select value={field.value ?? ""} onValueChange={field.onChange}>
                     <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="academic">Academic</SelectItem>
-                      <SelectItem value="sports">Sports</SelectItem>
-                      <SelectItem value="arts">Arts</SelectItem>
-                      <SelectItem value="community">Community</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
+                      <SelectItem value="student">Student</SelectItem>
+                      <SelectItem value="teacher">Teacher</SelectItem>
+                      <SelectItem value="school">School</SelectItem>
                     </SelectContent>
                   </Select>
                 )} />

@@ -4,21 +4,16 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer,
 } from "recharts";
+import type { DailyVisitorStats } from "@/lib/analytics";
 
-const DATA = [
-  { day: "Mon", visitors: 120, unique: 84 },
-  { day: "Tue", visitors: 185, unique: 132 },
-  { day: "Wed", visitors: 142, unique: 99 },
-  { day: "Thu", visitors: 203, unique: 154 },
-  { day: "Fri", visitors: 178, unique: 120 },
-  { day: "Sat", visitors: 95, unique: 68 },
-  { day: "Sun", visitors: 67, unique: 45 },
-];
+interface VisitorChartProps {
+  data: DailyVisitorStats[];
+}
 
-export default function VisitorChart() {
+export default function VisitorChart({ data }: VisitorChartProps) {
   return (
     <ResponsiveContainer width="100%" height={220}>
-      <AreaChart data={DATA} margin={{ top: 5, right: 8, left: -24, bottom: 0 }}>
+      <AreaChart data={data} margin={{ top: 5, right: 8, left: -24, bottom: 0 }}>
         <defs>
           <linearGradient id="gradVisitors" x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor="#00376f" stopOpacity={0.18} />

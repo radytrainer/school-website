@@ -8,20 +8,35 @@ import { Toaster } from "sonner";
 import type { Metadata } from "next";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
+const SCHOOL_NAME_EN = process.env.NEXT_PUBLIC_SCHOOL_NAME_EN ?? "Kamrieng High School";
+const SCHOOL_NAME_KM = process.env.NEXT_PUBLIC_SCHOOL_NAME_KM ?? "វិទ្យាល័យកំរៀង";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: process.env.NEXT_PUBLIC_SCHOOL_NAME_EN ?? "School Website",
-    template: `%s | ${process.env.NEXT_PUBLIC_SCHOOL_NAME_EN ?? "School"}`,
+    default: SCHOOL_NAME_EN,
+    template: `%s | ${SCHOOL_NAME_EN}`,
   },
-  description: `Official website of ${process.env.NEXT_PUBLIC_SCHOOL_NAME_EN ?? "our school"} — news, achievements, and more.`,
-  keywords: ["school", "education", "Cambodia", "high school"],
+  description: `${SCHOOL_NAME_EN} (${SCHOOL_NAME_KM}) is a public high school in Kamrieng district, Battambang province, Cambodia — official website with news, student achievements, admissions documents, and more.`,
+  keywords: [
+    "Kamrieng High School",
+    "Kamrieng",
+    SCHOOL_NAME_KM,
+    "high school Battambang",
+    "Battambang high school",
+    "school in Kamrieng",
+    "Kamrieng district Battambang",
+    "Cambodia high school",
+  ],
+  alternates: {
+    languages: { km: "/km", en: "/en" },
+  },
   openGraph: {
     type: "website",
-    siteName: process.env.NEXT_PUBLIC_SCHOOL_NAME_EN,
+    siteName: SCHOOL_NAME_EN,
     locale: "km_KH",
     alternateLocale: ["en_US"],
+    images: ["/images/logo/logo.png"],
   },
   twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true },

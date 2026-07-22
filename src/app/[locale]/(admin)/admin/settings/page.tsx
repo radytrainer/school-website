@@ -1,15 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useLocale } from "next-intl";
-import { Save, Loader2, Settings, Users, FileText, Globe } from "lucide-react";
+import { Save, Loader2, Settings, Users, FileText, Globe, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
-import { upsertSetting, upsertSchoolInfo, updateLeadership } from "@/actions/settings";
+import { upsertSetting, upsertSchoolInfo, updateLeadership, getAdminLeadershipList } from "@/actions/settings";
+import { resolveImageUrl } from "@/lib/utils";
 import type { Leadership } from "@/types";
 import { Switch } from "@/components/ui/switch";
 
@@ -25,10 +27,10 @@ export default function AdminSettingsPage() {
 
   useEffect(() => {
     const init = async () => {
-      const [{ data: sets }, { data: info }, { data: leaders }] = await Promise.all([
+      const [{ data: sets }, { data: info }, leaders] = await Promise.all([
         supabase.from("settings").select("key, value"),
         supabase.from("school_info").select("*"),
-        supabase.from("leadership").select("*").order("sort_order"),
+        getAdminLeadershipList(),
       ]);
 
       const settingsMap: SettingsMap = {};
@@ -41,7 +43,7 @@ export default function AdminSettingsPage() {
       });
       setSchoolInfo(infoMap);
 
-      setLeadership((leaders ?? []) as Leadership[]);
+      setLeadership(leaders);
       setLoading(false);
     };
     init();
@@ -107,7 +109,7 @@ export default function AdminSettingsPage() {
         <TabsContent value="general" className="space-y-5 mt-4">
           <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
             <h2 className="font-semibold text-gray-900">Contact Information</h2>
-            {["school_address_km", "school_address_en", "school_phone", "school_email", "school_hours_km", "school_hours_en", "school_facebook", "school_youtube"].map((key) => (
+            {["school_address_km", "school_address_en", "school_phone", "school_email", "school_hours_km", "school_hours_en", "school_facebook", "school_tiktok"].map((key) => (
               <div key={key} className="flex items-end gap-3">
                 <div className="flex-1 space-y-1.5">
                   <Label className="capitalize">{key.replace(/_/g, " ")}</Label>
@@ -122,6 +124,53 @@ export default function AdminSettingsPage() {
                 </Button>
               </div>
             ))}
+          </div>
+
+          {/* Admin login background */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+            <div className="flex items-center gap-2">
+              <ImageIcon className="w-4 h-4 text-school-blue-800" />
+              <h2 className="font-semibold text-gray-900">Admin Login Background</h2>
+            </div>
+            <p className="text-xs text-gray-400">
+              Background photo shown behind the admin login form. Paste a Google Drive share link
+              (file must be shared as &quot;Anyone with the link&quot;) or any direct image URL. Leave blank for a plain background.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-[1fr_160px] gap-4 items-start">
+              <div className="flex items-end gap-3">
+                <div className="flex-1 space-y-1.5">
+                  <Label>Image URL</Label>
+                  <Input
+                    value={settings.login_background_url ?? ""}
+                    onChange={(e) => setSettings((p) => ({ ...p, login_background_url: e.target.value }))}
+                    placeholder="https://drive.google.com/file/d/.../view"
+                  />
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleSaveSetting("login_background_url", settings.login_background_url ?? "")}
+                  disabled={saving}
+                >
+                  <Save className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+              <div className="relative w-full h-24 rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                {settings.login_background_url ? (
+                  <Image
+                    src={resolveImageUrl(settings.login_background_url)}
+                    alt="Preview"
+                    fill
+                    className="object-cover"
+                    sizes="160px"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-300">
+                    No image
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </TabsContent>
 

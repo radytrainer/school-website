@@ -46,9 +46,11 @@ CREATE TRIGGER trg_teachers_updated_at BEFORE UPDATE ON teachers
 
 ALTER TABLE teachers ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Public can read active teachers" ON teachers;
 CREATE POLICY "Public can read active teachers" ON teachers
   FOR SELECT USING (is_active = true);
 
+DROP POLICY IF EXISTS "Service role full access teachers" ON teachers;
 CREATE POLICY "Service role full access teachers" ON teachers
   USING (auth.role() = 'service_role');
 

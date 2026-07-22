@@ -8,7 +8,7 @@ import { ArrowRight, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { News } from "@/types";
-import { formatShortDate, getLocalizedText, truncate } from "@/lib/utils";
+import { formatShortDate, getLocalizedText, truncate, resolveImageUrl } from "@/lib/utils";
 
 interface NewsSectionProps {
   news: News[];
@@ -31,7 +31,7 @@ function NewsCard({ item, locale, index }: { item: News; locale: string; index: 
       <div className="relative aspect-[16/9] overflow-hidden bg-gray-100">
         {item.featured_image ? (
           <Image
-            src={item.featured_image}
+            src={resolveImageUrl(item.featured_image)}
             alt={title}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-500"

@@ -52,6 +52,23 @@ export function formatShortDate(date: string | Date, locale = "en"): string {
   return format(d, "MMM d, yyyy");
 }
 
+// ─── Image URL helpers ─────────────────────────────────────────
+
+// Google Drive "share" links (e.g. the "Copy link" button) point to an HTML
+// viewer page, not the raw image, so pasting one straight into an <Image>
+// src fails. This rewrites recognized Drive link formats to Google's direct
+// image CDN so they render normally. Any other URL passes through unchanged.
+export function resolveImageUrl(url?: string | null): string {
+  if (!url) return "";
+  const fileIdMatch =
+    url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/) ??
+    url.match(/drive\.google\.com\/(?:open|uc)\?(?:.*&)?id=([a-zA-Z0-9_-]+)/);
+  if (fileIdMatch) {
+    return `https://lh3.googleusercontent.com/d/${fileIdMatch[1]}`;
+  }
+  return url;
+}
+
 // ─── String helpers ───────────────────────────────────────────
 
 export function slugify(text: string): string {
@@ -71,6 +88,17 @@ export function truncate(text: string, length: number): string {
 
 export function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, "");
+}
+
+// Pulls plain-text bullet items out of a rich-text `<ul><li>…</li></ul>`
+// value so admin-edited content can drop into a custom-styled list (e.g. a
+// dot-marker card) instead of raw browser <ul> rendering.
+export function parseListItems(html?: string | null): string[] {
+  if (!html) return [];
+  const matches = [...html.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/gi)];
+  return matches
+    .map((m) => stripHtml(m[1]).replace(/&nbsp;/g, " ").trim())
+    .filter(Boolean);
 }
 
 // ─── File helpers ─────────────────────────────────────────────

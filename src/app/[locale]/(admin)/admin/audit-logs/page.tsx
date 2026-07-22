@@ -13,7 +13,7 @@ const ACTION_COLORS: Record<string, "default" | "success" | "warning" | "destruc
 async function getAuditLogs() {
   const supabase = createServerClient();
   const { data } = await supabase
-    .from("audit_logs")
+    .from("admin_audit_logs")
     .select("*")
     .order("created_at", { ascending: false })
     .limit(100);

@@ -1,8 +1,17 @@
 "use server";
 
 import { createServerClient } from "@/lib/supabase";
-import type { ActionResult } from "@/types";
+import type { ActionResult, Leadership } from "@/types";
 import { revalidatePath, revalidateTag } from "next/cache";
+
+// The admin panel's browser client uses the anon key, which is subject to
+// the public "is_active only" RLS policy — so an inactive/hidden leader
+// would be invisible in the admin Settings > Leadership tab too.
+export async function getAdminLeadershipList(): Promise<Leadership[]> {
+  const supabase = createServerClient();
+  const { data } = await supabase.from("leadership").select("*").order("sort_order");
+  return (data ?? []) as Leadership[];
+}
 
 export async function upsertSetting(
   key: string,
@@ -29,17 +38,31 @@ export async function upsertSchoolInfo(
   contentEn: string
 ): Promise<ActionResult<void>> {
   const supabase = createServerClient();
-  const { error } = await supabase
+
+  // `section` has no unique constraint in the live schema, so a real
+  // `.upsert(..., { onConflict: "section" })` fails with "there is no
+  // unique or exclusion constraint matching the ON CONFLICT specification".
+  // Look the row up manually instead and update or insert accordingly.
+  const { data: existing } = await supabase
     .from("school_info")
-    .upsert(
-      {
+    .select("id")
+    .eq("section", section)
+    .maybeSingle();
+
+  const { error } = existing
+    ? await supabase
+        .from("school_info")
+        .update({
+          content_km: contentKm,
+          content_en: contentEn,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", existing.id)
+    : await supabase.from("school_info").insert({
         section,
         content_km: contentKm,
         content_en: contentEn,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "section" }
-    );
+      });
   if (error) return { success: false, error: error.message };
 
   revalidatePath("/[locale]/(public)/about", "page");

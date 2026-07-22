@@ -8,11 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { supabase } from "@/lib/supabase";
 import type { User } from "@/types";
 import { formatShortDate, getInitials } from "@/lib/utils";
 import { toast } from "sonner";
-import { deleteUser, toggleUserActive } from "@/actions/users";
+import { deleteUser, toggleUserActive, getAdminUsersList } from "@/actions/users";
 import { useAuth } from "@/contexts/AuthContext";
 
 const ROLE_COLORS: Record<string, string> = {
@@ -31,10 +30,8 @@ export default function AdminUsersPage() {
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
-    let query = supabase.from("users").select("*").order("created_at", { ascending: false });
-    if (roleFilter !== "all") query = query.eq("role", roleFilter);
-    const { data } = await query;
-    let list = (data ?? []) as User[];
+    let list = await getAdminUsersList();
+    if (roleFilter !== "all") list = list.filter((u) => u.role === roleFilter);
     if (search) {
       const q = search.toLowerCase();
       list = list.filter((u) => u.full_name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q));

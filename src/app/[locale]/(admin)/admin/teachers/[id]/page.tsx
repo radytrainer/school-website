@@ -12,9 +12,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { teacherSchema, type TeacherInput } from "@/lib/validations";
-import { createTeacher, updateTeacher } from "@/actions/teachers";
-import { supabase } from "@/lib/supabase";
+import { createTeacher, updateTeacher, getAdminTeacherById } from "@/actions/teachers";
 
 interface PageProps { params: Promise<{ id: string }>; }
 
@@ -26,11 +26,11 @@ export default function TeacherFormPage({ params }: PageProps) {
   const [loading, setLoading] = useState(!isNew);
 
   const { register, handleSubmit, control, setValue, formState: { errors, isSubmitting } } =
-    useForm<TeacherInput>({ resolver: zodResolver(teacherSchema), defaultValues: { is_active: true, sort_order: 0 } });
+    useForm<TeacherInput>({ resolver: zodResolver(teacherSchema), defaultValues: { is_active: true, sort_order: 0, grade_levels: [] } });
 
   useEffect(() => {
     if (!isNew) {
-      supabase.from("teachers").select("*").eq("id", id).single().then(({ data }) => {
+      getAdminTeacherById(id).then((data) => {
         if (data) Object.entries(data).forEach(([k, v]) => { if (v !== null) setValue(k as keyof TeacherInput, v as string); });
         setLoading(false);
       });
@@ -74,7 +74,19 @@ export default function TeacherFormPage({ params }: PageProps) {
                 </div>
               </div>
 
-              <h2 className="font-semibold text-gray-900 pt-2">Subject</h2>
+              <h2 className="font-semibold text-gray-900 pt-2">Position</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label>តួនាទី (ខ្មែរ)</Label>
+                  <Input {...register("position_km")} className="font-khmer" placeholder="ឧ. គ្រូបង្រៀន" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Position (English)</Label>
+                  <Input {...register("position_en")} placeholder="e.g. Teacher" />
+                </div>
+              </div>
+
+              <h2 className="font-semibold text-gray-900 pt-2">Subject Currently Taught</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label>មុខវិជ្ជា (ខ្មែរ)</Label>
@@ -83,6 +95,18 @@ export default function TeacherFormPage({ params }: PageProps) {
                 <div className="space-y-1.5">
                   <Label>Subject (English)</Label>
                   <Input {...register("subject_en")} placeholder="e.g. Mathematics" />
+                </div>
+              </div>
+
+              <h2 className="font-semibold text-gray-900 pt-2">Specialization / Major</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label>ជំនាញ (ខ្មែរ)</Label>
+                  <Input {...register("specialization_km")} className="font-khmer" placeholder="ឧ. ប្រវត្តិវិទ្យា" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Specialization (English)</Label>
+                  <Input {...register("specialization_en")} placeholder="e.g. History" />
                 </div>
               </div>
 
@@ -116,12 +140,72 @@ export default function TeacherFormPage({ params }: PageProps) {
             <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
               <h2 className="font-semibold text-gray-900">Settings</h2>
               <div className="space-y-1.5">
+                <Label>Gender</Label>
+                <Controller
+                  name="gender"
+                  control={control}
+                  render={({ field }) => (
+                    <Select value={field.value ?? "unset"} onValueChange={(v) => field.onChange(v === "unset" ? undefined : v)}>
+                      <SelectTrigger><SelectValue placeholder="Not set" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="unset">Not set</SelectItem>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Phone Number</Label>
+                <Input {...register("phone")} placeholder="e.g. 012 345 678" />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Date of Birth</Label>
+                <p className="text-xs text-gray-400">Admin records only — not shown on the public site.</p>
+                <Input type="date" {...register("date_of_birth")} />
+              </div>
+              <div className="space-y-1.5">
                 <Label>Years of Experience</Label>
                 <Input type="number" min={0} {...register("years_experience")} placeholder="0" />
               </div>
               <div className="space-y-1.5">
                 <Label>Sort Order</Label>
                 <Input type="number" min={0} {...register("sort_order")} placeholder="0" />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Grades Taught</Label>
+                <Controller
+                  name="grade_levels"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex flex-wrap gap-2">
+                      {[7, 8, 9, 10, 11, 12].map((grade) => {
+                        const checked = (field.value ?? []).includes(grade);
+                        return (
+                          <button
+                            key={grade}
+                            type="button"
+                            onClick={() =>
+                              field.onChange(
+                                checked
+                                  ? (field.value ?? []).filter((g: number) => g !== grade)
+                                  : [...(field.value ?? []), grade].sort((a: number, b: number) => a - b)
+                              )
+                            }
+                            className={`w-10 h-9 rounded-md text-sm font-medium border transition-colors ${
+                              checked
+                                ? "bg-school-blue-800 text-white border-school-blue-800"
+                                : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                            }`}
+                          >
+                            {grade}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                />
               </div>
               <div className="flex items-center justify-between">
                 <Label>Active</Label>

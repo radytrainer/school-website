@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
-import { Loader2, Mail, Lock, School } from "lucide-react";
+import { Loader2, Mail, Lock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { loginSchema, type LoginInput } from "@/lib/validations";
 import { Button } from "@/components/ui/button";
@@ -77,8 +78,8 @@ export default function LoginPage() {
       >
         {/* Logo / header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-school-gold-500 mb-4">
-            <School className="w-8 h-8 text-white" />
+          <div className="relative inline-flex w-16 h-16 rounded-full overflow-hidden mb-4">
+            <Image src="/images/logo/logo.png" alt="School logo" fill className="object-cover" sizes="64px" />
           </div>
           <h1 className="text-2xl font-bold text-white">
             {process.env.NEXT_PUBLIC_SCHOOL_NAME_EN}

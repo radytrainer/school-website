@@ -4,11 +4,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
-import { formatDate, getLocalizedText, stripHtml, truncate } from "@/lib/utils";
+import { formatDate, getLocalizedText, stripHtml, truncate, resolveImageUrl } from "@/lib/utils";
 import { Calendar, Eye, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getPublishedNews } from "@/lib/queries";
 import ShareButton from "@/components/public/ShareButton";
+import NewsGallery from "@/components/public/NewsGallery";
+import ViewTracker from "@/components/public/news/ViewTracker";
 
 interface NewsDetailPageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -27,7 +29,7 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
     openGraph: {
       title: title ?? undefined,
       description: description ?? undefined,
-      images: item.featured_image ? [item.featured_image] : [],
+      images: item.featured_image ? [resolveImageUrl(item.featured_image)] : [],
     },
   };
 }
@@ -52,6 +54,7 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
 
   return (
     <div className="min-h-screen bg-white pt-20">
+      <ViewTracker newsId={news.id} />
       <div className="container mx-auto px-4 py-10 max-w-4xl">
         {/* Back */}
         <Button asChild variant="ghost" size="sm" className="mb-6 -ml-2">
@@ -83,7 +86,7 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
         {/* Featured image */}
         {news.featured_image && (
           <div className="relative aspect-[16/9] rounded-2xl overflow-hidden mb-8 shadow-lg">
-            <Image src={news.featured_image} alt={title} fill className="object-cover" priority />
+            <Image src={resolveImageUrl(news.featured_image)} alt={title} fill className="object-cover" priority />
           </div>
         )}
 
@@ -94,6 +97,9 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
           }`}
           dangerouslySetInnerHTML={{ __html: content ?? "" }}
         />
+
+        {/* Photo gallery */}
+        <NewsGallery images={news.images ?? []} alt={title} km={locale === "km"} />
 
         {/* Share */}
         <div className="mt-10 pt-6 border-t flex items-center justify-between">
@@ -119,7 +125,7 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
                   >
                     <div className="relative aspect-[16/9] bg-gray-100">
                       {item.featured_image && (
-                        <Image src={item.featured_image} alt={rTitle} fill className="object-cover group-hover:scale-105 transition-transform" />
+                        <Image src={resolveImageUrl(item.featured_image)} alt={rTitle} fill className="object-cover group-hover:scale-105 transition-transform" />
                       )}
                     </div>
                     <div className="p-3">

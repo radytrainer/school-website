@@ -1,71 +1,62 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
-import { getLocalizedText, cn } from "@/lib/utils";
-import { Eye, Star, ArrowRight, User, GraduationCap, Quote, Mail, FileText } from "lucide-react";
-import { getAboutPageData } from "@/lib/queries";
+import { getLocalizedText, cn, parseListItems } from "@/lib/utils";
+import { Eye, Star, ArrowRight, Users, GraduationCap, Layers, Award, MapPin, CalendarDays } from "lucide-react";
+import { getAboutPageData, getCurrentStatistics } from "@/lib/queries";
+import OrganizationSection from "@/components/public/about/OrganizationSection";
+import StaffDirectory from "@/components/public/about/StaffDirectory";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
   const t = await getTranslations("about");
-  return { title: t("title") };
+  const description =
+    locale === "km"
+      ? "ស្វែងយល់អំពីបេសកកម្ម អ្នកដឹកនាំ និងប្រវត្តិសាស្ត្ររបស់វិទ្យាល័យកំរៀង ស្ថិតនៅស្រុកកំរៀង ខេត្តបាត់ដំបង។"
+      : "Learn about Kamrieng High School's mission, leadership, and history — a public high school in Kamrieng district, Battambang province, Cambodia.";
+  return {
+    title: t("title"),
+    description,
+    alternates: { canonical: `/${locale}/about`, languages: { km: "/km/about", en: "/en/about" } },
+  };
 }
 
-const MILESTONES = [
-  {
-    year: "1954",
-    title_en: "Official Opening",
-    title_km: "ការបើកផ្លូវការ",
-    desc_en:
-      "The school was inaugurated by His Majesty King Norodom Sihanouk, marking a new era for local education.",
-    desc_km:
-      "សាលារៀន​ ត្រូវ​ បាន​ ឧ​ទ្ទិ​ស​ ​ ដោយ​ ព្រះ​ ករុណា​ ព្រះ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​",
-    color: "#c0392b",
-  },
-  {
-    year: "1985",
-    title_en: "Reconstruction Era",
-    title_km: "ជំនាន់ស្ថាបនាឡើងវិញ",
-    desc_en:
-      "Following the dark years, the school was modernized with three new academic blocks and a science laboratory.",
-    desc_km:
-      "ក្រោយ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​",
-    color: "#00376f",
-  },
-  {
-    year: "2020",
-    title_en: "Digital Transformation",
-    title_km: "ការផ្លាស់ប្ដូរឌីជីថល",
-    desc_en:
-      "Introduction of the E-Learning center and fiber optic infrastructure to support modern digital literacy.",
-    desc_km:
-      "ការ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​ ​",
-    color: "#00376f",
-  },
-];
-
-const CORE_VALUES = [
+const DEFAULT_CORE_VALUES_EN = [
   "Academic Excellence",
   "Integrity & Honor",
   "Cultural Pride",
   "Innovation",
+];
+const DEFAULT_CORE_VALUES_KM = [
+  "ឧត្តមភាពសិក្សា",
+  "សុចរិតភាព និងកិត្តិយស",
+  "មោទនភាពវប្បធម៌",
+  "នវានុវត្តន៍",
 ];
 
 export default async function AboutPage() {
   const locale = await getLocale();
   const t = await getTranslations("about");
   const km = locale === "km";
-  const { schoolInfo, leadership, teachers } = await getAboutPageData();
-
-  const leaders = leadership
-    .filter((l) => l.is_active)
-    .sort((a, b) => a.sort_order - b.sort_order);
-  const principal = leaders[0];
-  const viceLeaders = leaders.slice(1);
+  const { schoolInfo, leadership, teachers, milestones } = await getAboutPageData();
+  const stats = await getCurrentStatistics();
 
   const infoMap = Object.fromEntries(schoolInfo.map((i) => [i.section, i]));
   const vision = infoMap["vision"];
   const mission = infoMap["mission"];
   const history = infoMap["history"];
+  const values = infoMap["values"];
+
+  const parsedCoreValues = parseListItems(
+    values ? getLocalizedText(values.content_km, values.content_en, locale) : null
+  );
+  const coreValues =
+    parsedCoreValues.length > 0
+      ? parsedCoreValues
+      : km
+        ? DEFAULT_CORE_VALUES_KM
+        : DEFAULT_CORE_VALUES_EN;
+
+  const sortedMilestones = [...milestones].sort((a, b) => a.sort_order - b.sort_order);
 
   return (
     <div className="min-h-screen" style={{ background: "#f8f9ff" }}>
@@ -88,9 +79,47 @@ export default async function AboutPage() {
             className={cn("text-base md:text-lg text-white/70 leading-relaxed", km && "font-khmer")}
           >
             {km
-              ? "ការដាំដុះភាពឆ្នើម និងមោទនភាពជាតិ ក្នុងការអប់រំសាធារណៈ នៃប្រទេសកម្ពុជា ចាប់តាំងពីឆ្នាំ ១៩៥៤"
-              : "Cultivating excellence and national pride in Cambodian public education since 1954. We are committed to building the future of our nation through academic rigor and cultural values."}
+              ? "សាលារដ្ឋមធ្យមសិក្សានៅស្រុកកំរៀង ខេត្តបាត់ដំបង បម្រើសហគមន៍ជនបទតាំងពីឆ្នាំ ២០០០ ជាមួយបេសកកម្មពង្រីកឱកាសអប់រំប្រកបដោយគុណភាពដល់កូនសិស្សគ្រប់រូប"
+              : "A public secondary school in Kamrieng district, Battambang province, serving this rural community since 2000 — committed to expanding access to quality education for every student."}
           </p>
+        </div>
+      </section>
+
+      {/* ── Quick Facts ── */}
+      <section className="py-12" style={{ background: "#ffffff" }}>
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-6xl mx-auto -mt-24 relative z-10">
+            {[
+              { icon: CalendarDays, label_en: "Established", label_km: "ឆ្នាំបង្កើត", value: "2000" },
+              { icon: MapPin, label_en: "Land Area", label_km: "ផ្ទៃដី", value: "21,253 m²" },
+              { icon: Users, label_en: "Students", label_km: "សិស្ស", value: (stats.total_students ?? 0).toLocaleString() },
+              { icon: GraduationCap, label_en: "Teachers", label_km: "គ្រូបង្រៀន", value: String(stats.total_teachers ?? 0) },
+              { icon: Layers, label_en: "Classes", label_km: "ថ្នាក់រៀន", value: String(stats.total_classes ?? 0) },
+              { icon: Award, label_en: "BAC Pass Rate", label_km: "អត្រាប្រឡងជាប់", value: `${stats.pass_rate ?? stats.graduation_rate ?? 0}%` },
+            ].map((fact) => {
+              const Icon = fact.icon;
+              return (
+                <div
+                  key={fact.label_en}
+                  className="bg-white rounded-2xl p-4 md:p-5 text-center flex flex-col items-center gap-2"
+                  style={{ boxShadow: "0px 8px 30px rgba(30,78,140,0.10)" }}
+                >
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center"
+                    style={{ background: "rgba(0,55,111,0.08)" }}
+                  >
+                    <Icon className="w-5 h-5" style={{ color: "#00376f" }} />
+                  </div>
+                  <p className="text-xl md:text-2xl font-bold tabular-nums" style={{ color: "#0d1c2f" }}>
+                    {fact.value}
+                  </p>
+                  <p className={cn("text-xs leading-tight", km && "font-khmer")} style={{ color: "#8993a3" }}>
+                    {km ? fact.label_km : fact.label_en}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
@@ -170,7 +199,7 @@ export default async function AboutPage() {
                 </div>
               </div>
               <ul className="space-y-4 flex-1">
-                {CORE_VALUES.map((v) => (
+                {coreValues.map((v) => (
                   <li key={v} className="flex items-center gap-3 text-sm font-semibold" style={{ color: "#261900" }}>
                     <span
                       className="w-2 h-2 rounded-full flex-shrink-0"
@@ -193,8 +222,8 @@ export default async function AboutPage() {
               <p className="font-khmer text-3xl md:text-4xl mb-1" style={{ color: "#00376f" }}>
                 ប្រវត្តិ​សាលា
               </p>
-              <h2 className="text-2xl font-bold mb-6" style={{ color: "#0d1c2f" }}>
-                {history ? getLocalizedText(null, history.title_en, "en") : "Our Rich History"}
+              <h2 className={cn("text-2xl font-bold mb-6", km && "font-khmer")} style={{ color: "#0d1c2f" }}>
+                {history ? getLocalizedText(history.title_km, history.title_en, locale) : "Our Rich History"}
               </h2>
               <div
                 className={cn("text-base leading-relaxed mb-6 prose prose-sm max-w-none", km && "font-khmer")}
@@ -237,7 +266,7 @@ export default async function AboutPage() {
                   className="text-xs font-semibold px-3 py-1.5 rounded-full backdrop-blur-sm"
                   style={{ background: "rgba(0,0,0,0.35)", color: "#ffffff" }}
                 >
-                  Established 1954
+                  {km ? "បង្កើតឡើងឆ្នាំ ២០០០" : "Established 2000"}
                 </span>
               </div>
             </div>
@@ -264,11 +293,11 @@ export default async function AboutPage() {
               style={{ background: "#c3c6d2", transform: "translateX(-50%)" }}
             />
 
-            {MILESTONES.map((m, i) => {
+            {sortedMilestones.map((m, i) => {
               const isLeft = i % 2 === 0;
               return (
                 <div
-                  key={m.year}
+                  key={m.id}
                   className={cn(
                     "relative flex items-start gap-0 mb-16 last:mb-0",
                     isLeft ? "flex-row" : "flex-row-reverse"
@@ -283,13 +312,13 @@ export default async function AboutPage() {
                       className={cn("text-lg font-semibold mb-2", km && "font-khmer")}
                       style={{ color: "#0d1c2f" }}
                     >
-                      {km ? m.title_km : m.title_en}
+                      {getLocalizedText(m.title_km, m.title_en, locale)}
                     </h3>
                     <p
                       className={cn("text-sm leading-relaxed", km && "font-khmer")}
                       style={{ color: "#434750" }}
                     >
-                      {km ? m.desc_km : m.desc_en}
+                      {getLocalizedText(m.description_km, m.description_en, locale)}
                     </p>
                   </div>
 
@@ -313,271 +342,9 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* ── Leadership ── */}
-      <section className="py-16" style={{ background: "#f8f9ff" }}>
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2
-              className={cn("text-3xl font-bold mb-2", km && "font-khmer")}
-              style={{ color: "#0d1c2f" }}
-            >
-              {km ? "គណៈ​គ្រប់គ្រង​សាលា" : "School Leadership"}
-            </h2>
-            <p className="text-xs tracking-[0.2em] uppercase font-medium" style={{ color: "#737781" }}>
-              SCHOOL LEADERSHIP
-            </p>
-          </div>
+      <StaffDirectory leadership={leadership} teachers={teachers} locale={locale} />
 
-          {/* Principal featured card */}
-          {principal && (
-            <div
-              className="relative bg-white rounded-3xl overflow-hidden mb-10"
-              style={{ boxShadow: "0px 8px 30px rgba(30,78,140,0.10)" }}
-            >
-              {/* Top accent strip */}
-              <div
-                className="h-1.5 w-full"
-                style={{ background: "linear-gradient(90deg, #00376f 0%, #fdbc13 100%)" }}
-              />
-
-              <div className="grid grid-cols-1 md:grid-cols-[300px_1fr]">
-                {/* Photo */}
-                <div
-                  className="flex items-center justify-center p-8 md:p-10"
-                  style={{ background: "linear-gradient(160deg, #eef3ff 0%, #dde9ff 100%)" }}
-                >
-                  <div className="relative w-44 h-44 md:w-52 md:h-52 rounded-2xl overflow-hidden ring-4 ring-white shadow-xl shrink-0">
-                    {principal.photo_url ? (
-                      <Image
-                        src={principal.photo_url}
-                        alt={getLocalizedText(principal.name_km, principal.name_en, locale) ?? ""}
-                        fill
-                        className="object-cover"
-                        sizes="208px"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center" style={{ background: "#dde9ff" }}>
-                        <User className="w-20 h-20" style={{ color: "#a8c8ff" }} />
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="relative p-8 md:p-10 flex flex-col justify-center overflow-hidden">
-                  <Quote
-                    className="absolute -top-2 right-6 w-24 h-24 pointer-events-none"
-                    style={{ color: "#00376f", opacity: 0.06 }}
-                  />
-                  <span
-                    className="relative self-start inline-flex items-center text-xs tracking-[0.15em] uppercase font-semibold px-3 py-1.5 rounded-full mb-4"
-                    style={{ background: "rgba(0,55,111,0.08)", color: "#00376f" }}
-                  >
-                    {km ? "នាយកសាលា" : "School Principal"}
-                  </span>
-                  <h3
-                    className={cn("relative text-2xl md:text-3xl font-bold mb-5", km && "font-khmer")}
-                    style={{ color: "#00376f" }}
-                  >
-                    {getLocalizedText(principal.name_km, principal.name_en, locale)}
-                  </h3>
-                  <blockquote
-                    className={cn("relative text-base italic leading-relaxed mb-7 pl-5 border-l-[3px]", km && "font-khmer")}
-                    style={{ color: "#434750", borderColor: "#fdbc13" }}
-                  >
-                    {`"${getLocalizedText(principal.bio_km, principal.bio_en, locale)}"`}
-                  </blockquote>
-                  <div className="relative flex flex-wrap gap-3">
-                    <button
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                      style={{ background: "#00376f" }}
-                    >
-                      <Mail className="w-4 h-4" />
-                      {km ? "ការណែនាំ" : "View Message"}
-                    </button>
-                    <button
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold border transition-colors hover:bg-[#f0f5ff]"
-                      style={{ color: "#00376f", borderColor: "#00376f" }}
-                    >
-                      <FileText className="w-4 h-4" />
-                      {km ? "ជីវប្រវត្ដិ" : "Biography"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Vice directors */}
-          {viceLeaders.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {viceLeaders.map((leader) => (
-                <div
-                  key={leader.id}
-                  className="group bg-white rounded-2xl p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                  style={{ boxShadow: "0px 4px 20px rgba(30,78,140,0.07)" }}
-                >
-                  <div className="relative w-24 h-24 mx-auto rounded-full mb-4 overflow-hidden ring-4 ring-[#e6eeff] transition-all duration-300 group-hover:ring-[#fdbc13]/40">
-                    {leader.photo_url ? (
-                      <Image
-                        src={leader.photo_url}
-                        alt={getLocalizedText(leader.name_km, leader.name_en, locale) ?? ""}
-                        fill
-                        className="object-cover"
-                        sizes="96px"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center" style={{ background: "#e6eeff" }}>
-                        <User className="w-10 h-10" style={{ color: "#a8c8ff" }} />
-                      </div>
-                    )}
-                  </div>
-                  <h4
-                    className={cn("font-bold text-base mb-1 transition-colors group-hover:text-[#00376f]", km && "font-khmer")}
-                    style={{ color: "#0d1c2f" }}
-                  >
-                    {getLocalizedText(leader.name_km, leader.name_en, locale)}
-                  </h4>
-                  <p
-                    className={cn("text-sm", km && "font-khmer")}
-                    style={{ color: "#434750" }}
-                  >
-                    {getLocalizedText(leader.position_km, leader.position_en, locale)}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* ── Teachers ── */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-6">
-
-          {/* Section header */}
-          <div className="text-center mb-14">
-            <h2 className="font-khmer text-3xl mb-2" style={{ color: "#0d1c2f" }}>
-              គ្រូបង្រៀន
-            </h2>
-            <p className="text-xs tracking-[0.2em] uppercase font-medium mb-3" style={{ color: "#737781" }}>
-              OUR TEACHERS
-            </p>
-            <p className={cn("text-sm", km && "font-khmer")} style={{ color: "#434750" }}>
-              {km
-                ? `គ្រូបង្រៀន ${teachers.filter((t) => t.is_active).length} រូប ដែលមានការប្តេជ្ញាចិត្ត`
-                : `${teachers.filter((t) => t.is_active).length} dedicated educators shaping the next generation`}
-            </p>
-          </div>
-
-          {/* Grouped by department */}
-          {(() => {
-            const active = teachers.filter((t) => t.is_active);
-            const depts = Array.from(
-              new Map(
-                active.map((t) => [
-                  t.department_en,
-                  { en: t.department_en ?? "", km: t.department_km ?? "" },
-                ])
-              ).values()
-            );
-
-            return depts.map((dept) => {
-              const teachers = active.filter((t) => t.department_en === dept.en);
-              return (
-                <div key={dept.en} className="mb-12 last:mb-0">
-                  {/* Department header */}
-                  <div className="flex items-center gap-3 mb-6">
-                    <div
-                      className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                      style={{ background: "linear-gradient(135deg, #00376f 0%, #1e4e8c 100%)" }}
-                    >
-                      <GraduationCap className="w-4.5 h-4.5 text-white" />
-                    </div>
-                    <div>
-                      <h3
-                        className={cn("font-bold text-base leading-tight", km && "font-khmer")}
-                        style={{ color: "#00376f" }}
-                      >
-                        {km ? dept.km : dept.en}
-                      </h3>
-                      <p className="text-xs" style={{ color: "#737781" }}>
-                        {teachers.length} {teachers.length === 1 ? "teacher" : "teachers"}
-                      </p>
-                    </div>
-                    <div className="flex-1 h-px ml-2" style={{ background: "#e6eeff" }} />
-                  </div>
-
-                  {/* Teacher cards */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                    {teachers.map((teacher) => (
-                      <div
-                        key={teacher.id}
-                        className="group bg-white rounded-2xl p-5 text-center border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                        style={{
-                          borderColor: "#e6eeff",
-                          boxShadow: "0px 2px 12px rgba(30,78,140,0.05)",
-                        }}
-                      >
-                        {/* Avatar */}
-                        <div className="relative w-16 h-16 mx-auto rounded-full mb-3 overflow-hidden ring-2 ring-[#eff4ff] transition-all duration-300 group-hover:ring-[#fdbc13]/40">
-                          {teacher.photo_url ? (
-                            <Image
-                              src={teacher.photo_url}
-                              alt={km ? (teacher.name_km ?? teacher.name_en) : teacher.name_en}
-                              fill
-                              className="object-cover"
-                              sizes="64px"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center" style={{ background: "#eff4ff" }}>
-                              <User className="w-8 h-8" style={{ color: "#a8c8ff" }} />
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Name */}
-                        <h4
-                          className={cn("font-semibold text-sm mb-1 leading-tight transition-colors group-hover:text-[#00376f]", km && "font-khmer")}
-                          style={{ color: "#0d1c2f" }}
-                        >
-                          {km ? teacher.name_km : teacher.name_en}
-                        </h4>
-
-                        {/* Subject */}
-                        <p
-                          className={cn("text-xs mb-2 leading-snug", km && "font-khmer")}
-                          style={{ color: "#434750" }}
-                        >
-                          {km ? teacher.subject_km : teacher.subject_en}
-                        </p>
-
-                        {/* Qualification */}
-                        <p
-                          className="text-xs mb-2 leading-snug"
-                          style={{ color: "#737781" }}
-                        >
-                          {km ? teacher.qualification_km : teacher.qualification_en}
-                        </p>
-
-                        {/* Experience badge */}
-                        {teacher.years_experience && (
-                          <span
-                            className="inline-block text-xs font-medium px-2 py-0.5 rounded-full"
-                            style={{ background: "#eff4ff", color: "#00376f" }}
-                          >
-                            {teacher.years_experience}y exp
-                          </span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            });
-          })()}
-        </div>
-      </section>
+      <OrganizationSection teachers={teachers} locale={locale} />
     </div>
   );
 }

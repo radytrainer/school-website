@@ -7,7 +7,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { ArrowRight, Trophy, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Achievement } from "@/types";
-import { getLocalizedText, formatShortDate } from "@/lib/utils";
+import { getLocalizedText, formatShortDate, resolveImageUrl } from "@/lib/utils";
 
 const LEVEL_COLORS: Record<string, string> = {
   national: "bg-red-100 text-red-700",
@@ -67,7 +67,7 @@ export default function AchievementsSection({ achievements }: AchievementsSectio
                   <div className="w-14 h-14 rounded-xl bg-school-gold-100 flex items-center justify-center shrink-0">
                     {item.image_url ? (
                       <Image
-                        src={item.image_url}
+                        src={resolveImageUrl(item.image_url)}
                         alt={title}
                         width={56}
                         height={56}

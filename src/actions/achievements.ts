@@ -2,8 +2,28 @@
 
 import { createServerClient } from "@/lib/supabase";
 import { achievementSchema, type AchievementInput } from "@/lib/validations";
-import type { ActionResult } from "@/types";
+import type { ActionResult, Achievement } from "@/types";
 import { revalidatePath, revalidateTag } from "next/cache";
+
+// The admin panel's browser client uses the anon key, which is subject to
+// the public "published only" RLS policy — so it can never see drafts,
+// including ones an admin just created. These reads go through the
+// service-role client instead, same as the write actions below, since the
+// admin routes that call them are already gated by Firebase auth.
+export async function getAdminAchievementsList(): Promise<Achievement[]> {
+  const supabase = createServerClient();
+  const { data } = await supabase
+    .from("achievements")
+    .select("*")
+    .order("achievement_date", { ascending: false });
+  return (data ?? []) as Achievement[];
+}
+
+export async function getAdminAchievementById(id: string): Promise<Achievement | null> {
+  const supabase = createServerClient();
+  const { data } = await supabase.from("achievements").select("*").eq("id", id).single();
+  return (data as Achievement | null) ?? null;
+}
 
 export async function createAchievement(
   data: AchievementInput

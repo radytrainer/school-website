@@ -1,70 +1,34 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Heart, Building2, Smartphone } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, resolveImageUrl } from "@/lib/utils";
 import CopyButton from "@/components/public/CopyButton";
+import { getDonatePageData, getSiteSettings } from "@/lib/queries";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
   const t = await getTranslations("donate");
-  return { title: t("title") };
+  const description =
+    locale === "km"
+      ? "គាំទ្រវិទ្យាល័យកំរៀង ខេត្តបាត់ដំបង — បរិច្ចាគដើម្បីជួយអាហារូបករណ៍ ហេដ្ឋារចនាសម្ព័ន្ធ និងកម្មវិធីសិស្ស។"
+      : "Support Kamrieng High School in Battambang, Cambodia — donate to help fund scholarships, facilities, and student programs.";
+  return {
+    title: t("title"),
+    description,
+    alternates: { canonical: `/${locale}/donate`, languages: { km: "/km/donate", en: "/en/donate" } },
+  };
 }
-
-const BANK_ACCOUNTS = [
-  {
-    bank: "ABA Bank",
-    bank_km: "ធនាគារ ABA",
-    account_name_en: "Kamrieng High School",
-    account_name_km: "វិទ្យាល័យកំរៀង",
-    account_number: "000 123 456",
-    currency: "USD / KHR",
-    logo_color: "#0066cc",
-  },
-  {
-    bank: "ACLEDA Bank",
-    bank_km: "ធនាគារ ACLEDA",
-    account_name_en: "Kamrieng High School",
-    account_name_km: "វិទ្យាល័យកំរៀង",
-    account_number: "001 987 654",
-    currency: "USD / KHR",
-    logo_color: "#e62020",
-  },
-];
-
-const DONATION_USES = [
-  {
-    icon: "📚",
-    title_en: "Library & Books",
-    title_km: "បណ្ណាល័យ និងសៀវភៅ",
-    desc_en: "Help us expand our library with modern textbooks and learning materials.",
-    desc_km: "ជួយយើងពង្រីកបណ្ណាល័យជាមួយសៀវភៅ និងសម្ភារៈសិក្សាទំនើប",
-  },
-  {
-    icon: "💻",
-    title_en: "Technology & Labs",
-    title_km: "បច្ចេកវិទ្យា និងមន្ទីរពិសោធន៍",
-    desc_en: "Support the upgrade of computer labs and science facilities.",
-    desc_km: "គាំទ្រការធ្វើឱ្យប្រសើរឡើងនូវបន្ទប់កុំព្យូទ័រ និងមន្ទីរពិទ្យាសាស្ត្រ",
-  },
-  {
-    icon: "🏆",
-    title_en: "Student Scholarships",
-    title_km: "អាហារូបករណ៍សិស្ស",
-    desc_en: "Provide scholarships for talented students with financial need.",
-    desc_km: "ផ្តល់អាហារូបករណ៍ដល់សិស្សមានទេព្យកោសល្យដែលខ្វះខាតហិរញ្ញវត្ថុ",
-  },
-  {
-    icon: "🏫",
-    title_en: "School Infrastructure",
-    title_km: "ហេដ្ឋារចនាសម្ព័ន្ធសាលា",
-    desc_en: "Fund classroom renovations and campus improvements.",
-    desc_km: "ផ្តល់មូលនិធិសម្រាប់ការជួសជុលថ្នាក់រៀន និងការធ្វើឱ្យប្រសើរឡើងនូវបរិវេណ",
-  },
-];
 
 export default async function DonatePage() {
   const locale = await getLocale();
   const t = await getTranslations("donate");
   const km = locale === "km";
+  const [{ bankAccounts, donationUses }, settings] = await Promise.all([
+    getDonatePageData(),
+    getSiteSettings(),
+  ]);
+  const qrImageUrl = settings.donate_qr_image_url;
 
   return (
     <div className="min-h-screen" style={{ background: "#f8f9ff" }}>
@@ -110,9 +74,9 @@ export default async function DonatePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {DONATION_USES.map((use) => (
+            {donationUses.map((use) => (
               <div
-                key={use.title_en}
+                key={use.id}
                 className="bg-white rounded-2xl p-6 text-center hover:-translate-y-1 transition-transform duration-300"
                 style={{ boxShadow: "0px 4px 20px rgba(30,78,140,0.07)" }}
               >
@@ -121,7 +85,7 @@ export default async function DonatePage() {
                   {km ? use.title_km : use.title_en}
                 </h3>
                 <p className={cn("text-sm leading-relaxed", km && "font-khmer")} style={{ color: "#434750" }}>
-                  {km ? use.desc_km : use.desc_en}
+                  {km ? use.description_km : use.description_en}
                 </p>
               </div>
             ))}
@@ -145,9 +109,9 @@ export default async function DonatePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {BANK_ACCOUNTS.map((acc) => (
+            {bankAccounts.map((acc) => (
               <div
-                key={acc.bank}
+                key={acc.id}
                 className="rounded-2xl p-6 border"
                 style={{
                   borderColor: "#e6eeff",
@@ -160,11 +124,11 @@ export default async function DonatePage() {
                     className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-xs font-bold shrink-0"
                     style={{ background: acc.logo_color }}
                   >
-                    {acc.bank.slice(0, 3)}
+                    {(km ? acc.bank_name_km : acc.bank_name_en).slice(0, 3)}
                   </div>
                   <div>
                     <p className="font-bold text-sm" style={{ color: "#0d1c2f" }}>
-                      {km ? acc.bank_km : acc.bank}
+                      {km ? acc.bank_name_km : acc.bank_name_en}
                     </p>
                     <p className="text-xs" style={{ color: "#737781" }}>{acc.currency}</p>
                   </div>
@@ -211,22 +175,27 @@ export default async function DonatePage() {
           </p>
 
           <div className="bg-white rounded-2xl p-8 inline-block" style={{ boxShadow: "0px 4px 20px rgba(30,78,140,0.07)" }}>
-            {/* Placeholder QR */}
-            <div
-              className="w-48 h-48 mx-auto rounded-xl flex flex-col items-center justify-center mb-4"
-              style={{ background: "linear-gradient(135deg, #f0f4ff 0%, #e6eeff 100%)" }}
-            >
-              <div className="grid grid-cols-5 gap-1 opacity-40">
-                {[1,0,1,0,1,0,1,0,1,0,1,1,0,1,1,0,0,1,0,0,1,0,1,1,0].map((v, i) => (
-                  <div
-                    key={i}
-                    className="w-7 h-7 rounded-sm"
-                    style={{ background: v ? "#00376f" : "transparent" }}
-                  />
-                ))}
+            {qrImageUrl ? (
+              <div className="relative w-48 h-48 mx-auto rounded-xl overflow-hidden mb-4">
+                <Image src={resolveImageUrl(qrImageUrl)} alt="KHQR" fill className="object-contain" sizes="192px" />
               </div>
-              <p className="text-xs mt-2 font-medium" style={{ color: "#00376f" }}>ABA / KHQR</p>
-            </div>
+            ) : (
+              <div
+                className="w-48 h-48 mx-auto rounded-xl flex flex-col items-center justify-center mb-4"
+                style={{ background: "linear-gradient(135deg, #f0f4ff 0%, #e6eeff 100%)" }}
+              >
+                <div className="grid grid-cols-5 gap-1 opacity-40">
+                  {[1,0,1,0,1,0,1,0,1,0,1,1,0,1,1,0,0,1,0,0,1,0,1,1,0].map((v, i) => (
+                    <div
+                      key={i}
+                      className="w-7 h-7 rounded-sm"
+                      style={{ background: v ? "#00376f" : "transparent" }}
+                    />
+                  ))}
+                </div>
+                <p className="text-xs mt-2 font-medium" style={{ color: "#00376f" }}>ABA / KHQR</p>
+              </div>
+            )}
             <p className={cn("text-sm font-medium", km && "font-khmer")} style={{ color: "#434750" }}>
               {t("scan_qr")}
             </p>

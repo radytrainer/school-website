@@ -8,11 +8,10 @@ import { Plus, Search, Edit, Trash2, Loader2, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/lib/supabase";
 import type { Achievement } from "@/types";
-import { formatShortDate, getLocalizedText } from "@/lib/utils";
+import { formatShortDate, getLocalizedText, resolveImageUrl } from "@/lib/utils";
 import { toast } from "sonner";
-import { deleteAchievement } from "@/actions/achievements";
+import { deleteAchievement, getAdminAchievementsList } from "@/actions/achievements";
 
 const LEVEL_COLORS: Record<string, string> = {
   national: "bg-red-100 text-red-700",
@@ -36,10 +35,8 @@ export default function AdminAchievementsPage() {
 
   const fetchItems = useCallback(async () => {
     setLoading(true);
-    let query = supabase.from("achievements").select("*").order("achievement_date", { ascending: false });
-    if (statusFilter !== "all") query = query.eq("status", statusFilter);
-    const { data } = await query;
-    let list = (data ?? []) as Achievement[];
+    let list = await getAdminAchievementsList();
+    if (statusFilter !== "all") list = list.filter((a) => a.status === statusFilter);
     if (search) {
       const q = search.toLowerCase();
       list = list.filter((a) => a.title_en?.toLowerCase().includes(q) || a.title_km?.toLowerCase().includes(q));
@@ -116,7 +113,7 @@ export default function AdminAchievementsPage() {
                         <div className="flex items-center gap-3">
                           {item.image_url ? (
                             <div className="w-10 h-8 rounded overflow-hidden shrink-0">
-                              <Image src={item.image_url} alt={title} width={40} height={32} className="object-cover w-full h-full" />
+                              <Image src={resolveImageUrl(item.image_url)} alt={title} width={40} height={32} className="object-cover w-full h-full" />
                             </div>
                           ) : (
                             <div className="w-10 h-8 rounded bg-yellow-50 flex items-center justify-center shrink-0">

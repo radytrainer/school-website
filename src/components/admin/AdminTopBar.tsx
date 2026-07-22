@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { Bell, ExternalLink, Menu, Search, LogOut } from "lucide-react";
+import { Bell, ExternalLink, Menu, Search, LogOut, Globe } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -13,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
 import { getInitials } from "@/lib/utils";
-import type { Locale } from "@/i18n/config";
+import { locales, localeNames, localeFlags, type Locale } from "@/i18n/config";
 
 const ROLE_LABELS: Record<string, string> = {
   administrator: "Administrator",
@@ -21,10 +22,22 @@ const ROLE_LABELS: Record<string, string> = {
   editor: "Content Editor",
 };
 
-export default function AdminTopBar() {
+interface AdminTopBarProps {
+  onMenuClick: () => void;
+}
+
+export default function AdminTopBar({ onMenuClick }: AdminTopBarProps) {
   const { user, logout } = useAuth();
   const locale = useLocale() as Locale;
   const t = useTranslations("admin");
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const switchLocale = (newLocale: Locale) => {
+    const segments = pathname.split("/");
+    segments[1] = newLocale;
+    router.push(segments.join("/"));
+  };
 
   return (
     <header
@@ -38,6 +51,7 @@ export default function AdminTopBar() {
       {/* Left: mobile menu + search */}
       <div className="flex items-center gap-3 flex-1 max-w-md">
         <button
+          onClick={onMenuClick}
           className="lg:hidden p-2 rounded-lg transition-colors"
           style={{ color: "#8892a0" }}
         >
@@ -59,8 +73,34 @@ export default function AdminTopBar() {
         </div>
       </div>
 
-      {/* Right: view site + bell + user */}
+      {/* Right: locale + view site + bell + user */}
       <div className="flex items-center gap-1.5">
+        {/* Locale switcher */}
+        <div className="flex items-center gap-1 mr-1">
+          <Globe className="w-4 h-4 shrink-0" style={{ color: "#8892a0" }} />
+          {locales.map((loc) => (
+            <button
+              key={loc}
+              onClick={() => switchLocale(loc)}
+              title={localeNames[loc]}
+              className="text-xs px-2 py-1 rounded-lg font-medium transition-colors"
+              style={
+                loc === locale
+                  ? { background: "#fdbc13", color: "#fff" }
+                  : { color: "#8892a0" }
+              }
+              onMouseEnter={(e) => {
+                if (loc !== locale) e.currentTarget.style.background = "#f4f6fb";
+              }}
+              onMouseLeave={(e) => {
+                if (loc !== locale) e.currentTarget.style.background = "transparent";
+              }}
+            >
+              {localeFlags[loc]}
+            </button>
+          ))}
+        </div>
+
         <Link
           href={`/${locale}`}
           target="_blank"

@@ -6,8 +6,17 @@ import { Trophy, Star } from "lucide-react";
 import { getPublishedAchievements } from "@/lib/queries";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
   const t = await getTranslations("achievements");
-  return { title: t("title") };
+  const description =
+    locale === "km"
+      ? "សមិទ្ធផល រង្វាន់ និងកិត្តិយសរបស់សិស្ស និងគ្រូនៅវិទ្យាល័យកំរៀង ខេត្តបាត់ដំបង។"
+      : "Student and teacher achievements, awards, and recognitions from Kamrieng High School, Battambang, Cambodia.";
+  return {
+    title: t("title"),
+    description,
+    alternates: { canonical: `/${locale}/achievements`, languages: { km: "/km/achievements", en: "/en/achievements" } },
+  };
 }
 
 const LEVEL_COLORS: Record<string, string> = {

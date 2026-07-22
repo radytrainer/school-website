@@ -20,10 +20,12 @@ CREATE TYPE media_type AS ENUM ('image', 'video', 'document');
 CREATE TYPE audit_action AS ENUM ('create', 'update', 'delete', 'publish', 'archive', 'login', 'logout');
 
 -- ─────────────────────────────────────────────────────────────
--- USERS
+-- ADMIN USERS
+-- (named admin_users, not users, to avoid colliding with other
+-- apps sharing this Supabase project)
 -- ─────────────────────────────────────────────────────────────
 
-CREATE TABLE users (
+CREATE TABLE admin_users (
   id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   firebase_uid  TEXT UNIQUE NOT NULL,
   email         TEXT UNIQUE NOT NULL,
@@ -36,9 +38,9 @@ CREATE TABLE users (
   updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_users_firebase_uid ON users (firebase_uid);
-CREATE INDEX idx_users_email ON users (email);
-CREATE INDEX idx_users_role ON users (role);
+CREATE INDEX idx_admin_users_firebase_uid ON admin_users (firebase_uid);
+CREATE INDEX idx_admin_users_email ON admin_users (email);
+CREATE INDEX idx_admin_users_role ON admin_users (role);
 
 -- ─────────────────────────────────────────────────────────────
 -- SETTINGS
@@ -49,7 +51,7 @@ CREATE TABLE settings (
   key         TEXT UNIQUE NOT NULL,
   value       JSONB NOT NULL DEFAULT '{}',
   description TEXT,
-  updated_by  UUID REFERENCES users(id),
+  updated_by  UUID REFERENCES admin_users(id),
   updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -64,7 +66,7 @@ INSERT INTO settings (key, value, description) VALUES
     "email": "info@school.edu.kh",
     "map_embed_url": "",
     "facebook_url": "",
-    "youtube_url": "",
+    "tiktok_url": "",
     "telegram_url": ""
   }', 'School contact and social information'),
   ('homepage', '{
@@ -92,7 +94,7 @@ CREATE TABLE school_info (
   content_km  TEXT,
   content_en  TEXT,
   sort_order  INTEGER NOT NULL DEFAULT 0,
-  updated_by  UUID REFERENCES users(id),
+  updated_by  UUID REFERENCES admin_users(id),
   updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -123,12 +125,14 @@ CREATE TABLE statistics (
   total_classes   INTEGER NOT NULL DEFAULT 0,
   grade_a_students INTEGER NOT NULL DEFAULT 0,
   graduation_rate  NUMERIC(5,2) NOT NULL DEFAULT 0,  -- percentage
+  pass_rate       NUMERIC(5,2),
   male_students   INTEGER NOT NULL DEFAULT 0,
   female_students INTEGER NOT NULL DEFAULT 0,
+  new_students    INTEGER,
   is_current      BOOLEAN NOT NULL DEFAULT false,
   notes           TEXT,
-  created_by      UUID REFERENCES users(id),
-  updated_by      UUID REFERENCES users(id),
+  created_by      UUID REFERENCES admin_users(id),
+  updated_by      UUID REFERENCES admin_users(id),
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -167,8 +171,8 @@ CREATE TABLE news (
   status          content_status NOT NULL DEFAULT 'draft',
   publish_date    TIMESTAMPTZ,
   view_count      INTEGER NOT NULL DEFAULT 0,
-  created_by      UUID REFERENCES users(id),
-  updated_by      UUID REFERENCES users(id),
+  created_by      UUID REFERENCES admin_users(id),
+  updated_by      UUID REFERENCES admin_users(id),
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -213,8 +217,8 @@ CREATE TABLE activities (
   video_url       TEXT,
   status          content_status NOT NULL DEFAULT 'draft',
   view_count      INTEGER NOT NULL DEFAULT 0,
-  created_by      UUID REFERENCES users(id),
-  updated_by      UUID REFERENCES users(id),
+  created_by      UUID REFERENCES admin_users(id),
+  updated_by      UUID REFERENCES admin_users(id),
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -237,10 +241,12 @@ CREATE TABLE achievements (
   achievement_type achievement_type NOT NULL DEFAULT 'student',
   award_level      award_level NOT NULL DEFAULT 'school',
   achievement_date DATE,
+  participant_name TEXT,
   image_url        TEXT,
+  is_featured      BOOLEAN NOT NULL DEFAULT false,
   status           content_status NOT NULL DEFAULT 'draft',
-  created_by       UUID REFERENCES users(id),
-  updated_by       UUID REFERENCES users(id),
+  created_by       UUID REFERENCES admin_users(id),
+  updated_by       UUID REFERENCES admin_users(id),
   created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -263,8 +269,8 @@ CREATE TABLE galleries (
   is_featured     BOOLEAN NOT NULL DEFAULT false,
   sort_order      INTEGER NOT NULL DEFAULT 0,
   status          content_status NOT NULL DEFAULT 'draft',
-  created_by      UUID REFERENCES users(id),
-  updated_by      UUID REFERENCES users(id),
+  created_by      UUID REFERENCES admin_users(id),
+  updated_by      UUID REFERENCES admin_users(id),
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -283,7 +289,7 @@ CREATE TABLE media (
   duration     INTEGER,  -- seconds for video
   sort_order   INTEGER NOT NULL DEFAULT 0,
   is_featured  BOOLEAN NOT NULL DEFAULT false,
-  created_by   UUID REFERENCES users(id),
+  created_by   UUID REFERENCES admin_users(id),
   created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -318,8 +324,8 @@ CREATE TABLE downloads (
   category_id     UUID REFERENCES download_categories(id) ON DELETE SET NULL,
   download_count  INTEGER NOT NULL DEFAULT 0,
   is_active       BOOLEAN NOT NULL DEFAULT true,
-  created_by      UUID REFERENCES users(id),
-  updated_by      UUID REFERENCES users(id),
+  created_by      UUID REFERENCES admin_users(id),
+  updated_by      UUID REFERENCES admin_users(id),
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -341,7 +347,7 @@ CREATE TABLE messages (
   status      message_status NOT NULL DEFAULT 'unread',
   ip_address  TEXT,
   user_agent  TEXT,
-  replied_by  UUID REFERENCES users(id),
+  replied_by  UUID REFERENCES admin_users(id),
   replied_at  TIMESTAMPTZ,
   reply_text  TEXT,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -367,8 +373,8 @@ CREATE TABLE notices (
   end_date    DATE,
   is_pinned   BOOLEAN NOT NULL DEFAULT false,
   status      content_status NOT NULL DEFAULT 'draft',
-  created_by  UUID REFERENCES users(id),
-  updated_by  UUID REFERENCES users(id),
+  created_by  UUID REFERENCES admin_users(id),
+  updated_by  UUID REFERENCES admin_users(id),
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -378,12 +384,14 @@ CREATE INDEX idx_notices_dates ON notices (start_date, end_date);
 CREATE INDEX idx_notices_pinned ON notices (is_pinned) WHERE is_pinned = true;
 
 -- ─────────────────────────────────────────────────────────────
--- AUDIT LOGS
+-- ADMIN AUDIT LOGS
+-- (named admin_audit_logs, not audit_logs, to avoid colliding
+-- with other apps sharing this Supabase project)
 -- ─────────────────────────────────────────────────────────────
 
-CREATE TABLE audit_logs (
+CREATE TABLE admin_audit_logs (
   id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id     UUID REFERENCES users(id) ON DELETE SET NULL,
+  user_id     UUID REFERENCES admin_users(id) ON DELETE SET NULL,
   user_email  TEXT,
   action      audit_action NOT NULL,
   table_name  TEXT NOT NULL,
@@ -395,10 +403,10 @@ CREATE TABLE audit_logs (
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_audit_user ON audit_logs (user_id);
-CREATE INDEX idx_audit_table ON audit_logs (table_name);
-CREATE INDEX idx_audit_created ON audit_logs (created_at DESC);
-CREATE INDEX idx_audit_record ON audit_logs (table_name, record_id);
+CREATE INDEX idx_admin_audit_user ON admin_audit_logs (user_id);
+CREATE INDEX idx_admin_audit_table ON admin_audit_logs (table_name);
+CREATE INDEX idx_admin_audit_created ON admin_audit_logs (created_at DESC);
+CREATE INDEX idx_admin_audit_record ON admin_audit_logs (table_name, record_id);
 
 -- ─────────────────────────────────────────────────────────────
 -- FUNCTIONS & TRIGGERS
@@ -419,7 +427,7 @@ DECLARE
   t TEXT;
 BEGIN
   FOREACH t IN ARRAY ARRAY[
-    'users', 'statistics', 'news', 'activities', 'achievements',
+    'admin_users', 'statistics', 'news', 'activities', 'achievements',
     'galleries', 'downloads', 'messages', 'notices', 'leadership', 'school_info'
   ] LOOP
     EXECUTE format(
@@ -468,7 +476,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- ─────────────────────────────────────────────────────────────
 
 -- Enable RLS on all tables
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE school_info ENABLE ROW LEVEL SECURITY;
 ALTER TABLE leadership ENABLE ROW LEVEL SECURITY;
@@ -484,7 +492,7 @@ ALTER TABLE downloads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE download_categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notices ENABLE ROW LEVEL SECURITY;
-ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE admin_audit_logs ENABLE ROW LEVEL SECURITY;
 
 -- Public read for published content
 CREATE POLICY "Public can read published news" ON news
@@ -532,7 +540,7 @@ CREATE POLICY "Public can read settings" ON settings
   FOR SELECT USING (true);
 
 -- Service role full access (for server-side operations)
-CREATE POLICY "Service role full access users" ON users
+CREATE POLICY "Service role full access admin_users" ON admin_users
   USING (auth.role() = 'service_role');
 
 CREATE POLICY "Service role full access settings" ON settings
@@ -562,7 +570,7 @@ CREATE POLICY "Service role full access downloads" ON downloads
 CREATE POLICY "Service role full access notices" ON notices
   USING (auth.role() = 'service_role');
 
-CREATE POLICY "Service role full access audit_logs" ON audit_logs
+CREATE POLICY "Service role full access admin_audit_logs" ON admin_audit_logs
   USING (auth.role() = 'service_role');
 
 CREATE POLICY "Service role full access leadership" ON leadership

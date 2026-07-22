@@ -8,11 +8,10 @@ import { Plus, Search, Edit, Trash2, Loader2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/lib/supabase";
 import type { Teacher } from "@/types";
-import { getLocalizedText } from "@/lib/utils";
+import { getLocalizedText, resolveImageUrl } from "@/lib/utils";
 import { toast } from "sonner";
-import { deleteTeacher } from "@/actions/teachers";
+import { deleteTeacher, getAdminTeachersList } from "@/actions/teachers";
 
 export default function AdminTeachersPage() {
   const locale = useLocale();
@@ -22,8 +21,7 @@ export default function AdminTeachersPage() {
 
   const fetchItems = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase.from("teachers").select("*").order("sort_order");
-    let list = (data ?? []) as Teacher[];
+    let list = await getAdminTeachersList();
     if (search) {
       const q = search.toLowerCase();
       list = list.filter((t) => t.name_en?.toLowerCase().includes(q) || t.name_km?.toLowerCase().includes(q));
@@ -91,7 +89,7 @@ export default function AdminTeachersPage() {
                         <div className="flex items-center gap-3">
                           {item.photo_url ? (
                             <div className="w-9 h-9 rounded-full overflow-hidden shrink-0">
-                              <Image src={item.photo_url} alt={name} width={36} height={36} className="object-cover w-full h-full" />
+                              <Image src={resolveImageUrl(item.photo_url)} alt={name} width={36} height={36} className="object-cover object-top w-full h-full" />
                             </div>
                           ) : (
                             <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
