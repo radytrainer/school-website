@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { Bell, ExternalLink, Menu, Search, LogOut, Globe } from "lucide-react";
+import { Bell, ExternalLink, Menu, Search, LogOut, Globe, QrCode } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -75,6 +75,20 @@ export default function AdminTopBar({ onMenuClick }: AdminTopBarProps) {
 
       {/* Right: locale + view site + bell + user */}
       <div className="flex items-center gap-1.5">
+        {/* Student QR link */}
+        <Link
+          href="https://verify.kamrieng-highschool.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hidden sm:flex items-center gap-1.5 h-9 px-3 rounded-xl text-sm font-medium transition-colors mr-1"
+          style={{ color: "#8892a0" }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = "#00376f")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "#8892a0")}
+        >
+          <QrCode className="w-3.5 h-3.5" />
+          {locale === "km" ? "QR សិស្ស" : "Student QR"}
+        </Link>
+
         {/* Locale switcher */}
         <div className="flex items-center gap-1 mr-1">
           <Globe className="w-4 h-4 shrink-0" style={{ color: "#8892a0" }} />
